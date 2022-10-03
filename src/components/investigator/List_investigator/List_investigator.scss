@@ -1,0 +1,117 @@
+
+.title_header{
+    input{
+        width: 200px;
+        padding: 15px 15px;
+        float: left;
+        background-color: #EFEFEF;
+        border: none;
+        outline: none;
+        border-radius: 5px;
+    }
+}
+.filter_dashboard_grid{
+    button{
+        border: none;
+        padding: 11px 15px;
+        background-color: #161616;
+        color: #fff;
+        border-radius: 5px;
+        cursor: pointer;
+        img{
+            margin-left: 10px;
+            width: 10px;
+        }
+    }
+}
+.check_grid{
+    float: right;
+    clear: both;
+    margin-top: 10px;
+    .Checkbox{
+        margin-top: -20px;
+    }
+}
+.deleteAllButton{
+    border: none;
+    background-color: transparent;
+    img{
+        margin-top: -2px;
+        margin-right: 5px;
+        float: left;
+    }
+}
+
+.wrap_list_invst{
+    width: 85%;
+    padding-bottom: 20px;
+    background-color: #fff;
+    margin: auto;
+    clear: both;
+}
+.list_invst{
+    display: flex;
+    height: auto;
+    width: 100%;
+    border-bottom: 1px solid #E5EBEE;
+    padding: 5px 0px;
+    .title_invst{
+        width: 100%;
+        float: left;
+        padding: 20px 0px;
+        margin-left: 20px;
+        .grid_round{
+            padding: 10px;
+            border-radius: 100%;
+            background-color:#13C4CF;
+            float: left;
+        }
+        .grid_title{
+            margin-top: 2px;
+            margin-left: 20px;
+            float: left;
+            p{
+                font-size: 10px;
+                margin-top: 0px;
+            }
+        }
+        .grid_action{
+            padding: 10px;
+            float: right;
+            margin-right: 40px;
+            img{
+                width: 15px;
+                cursor: pointer;
+            }
+        }
+    }
+    
+}
+.wrap_popup_inv{
+    padding: 20px;
+    input{
+        width: 90%;
+        float: left;
+        margin-top: 15px;
+        clear: both;
+        padding: 10px;
+    }
+    p{
+        float: left;
+        clear: both;
+        margin: 0;
+        position: relative;
+        top: 10px;
+        font-size: 10px;
+    }
+    button{
+        float: left;
+        clear: both;
+        border: none;
+        padding: 10px 20px;
+        margin-top: 10px;
+        background-color: #161616;
+        color: #fff;
+        border-radius: 5px;
+    }
+}

@@ -1,0 +1,47 @@
+.header{
+    margin-top: 30px;
+    padding-left: 90px;
+    clear: both;
+}
+.title_header{
+    margin-left: 20px;
+    select{
+        font-size: 28px;
+        font-weight: 600;
+        border: none;
+        outline: none;
+        margin-left: -3px;
+        padding-right: 50px;
+        float: left;
+        position: relative;
+        z-index: 9;
+        background-color: transparent;
+        color: #161616;
+        option { font-size:14px; }
+        option:hover { background-color: #000; color: #fff; }
+    }
+    .bg-select{
+        width: 30px;
+        height: 30px;
+        float: left;
+        position: relative;
+        margin-left: -20px;
+    }
+}
+.text{
+    clear: both;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 34px;
+}
+.count{
+    clear: both;
+
+    font-style: normal;
+    font-size: 18px;
+}
+.button{
+    width: 40px;
+    margin-left: -15px;
+    margin-top: 0px;
+}

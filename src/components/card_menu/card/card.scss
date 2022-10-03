@@ -1,0 +1,172 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+$mainBGColor : #fff;
+$mainFont : 'Roboto', sans-serif;
+
+body{
+    background-color: $mainBGColor;
+    font-family: $mainFont;
+}
+
+
+.wrap{
+    margin: 10px;
+    border-radius: 10px;
+}
+.CardWrap{
+    border-radius: 10px;
+    color:#fff;
+}
+.wrapper_card{
+    float: left;
+    clear: both;
+    padding-left: 100px;
+}
+.titleWistle{
+    position: absolute;
+    color: $mainBGColor;
+    width: 230px;
+    margin-top: 30px;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 14px;
+}
+.title_date{
+    font-size: 10px;
+    float: left;
+}
+.title_task{
+    clear: both;
+}
+.status{
+    margin-top: -5px;
+    margin-left: 20px;
+    padding: 3px 10px 3px 10px;
+    font-size: 10px;
+    float: left;
+    border-radius: 3px;
+}
+.title_status{
+    &_1 {
+        background-color: #EBEBEB;
+    }
+    
+    &_2 {
+        background-color: #EBEBEB;
+        color: #4339F2;
+    }
+    &_3 {
+        background-color: #E3FFE5;
+        color: #34B53A;
+    }
+    &_4 {
+        background-color: #E3FFE5;
+        color: #34B53A;
+    }
+    &_5 {
+        background-color: #E3FFE5;
+        color: #34B53A;
+    }
+    &_6 {
+        background-color: #E3FFE5;
+        color: #34B53A;
+    }
+    &_7 {
+        background-color: #FFE4E1;
+        color: #E51908;
+    }
+}
+.arrow{
+    position: relative;
+    left:80px;
+}
+.title_investigator{
+    background-color: #EBEBEB;
+    margin-top: 10px;
+    padding: 3px 5px 3px 5px;
+    font-size: 10px;
+    float: left;
+    border-radius: 3px;
+}
+.top_modal_wrap{
+    width: 95%;
+    height: 20px;
+    margin: auto;
+    margin-top: 30px;
+}
+.close_modal{
+    float: right;
+    margin-right: 20px;
+    width: 7px;
+    height: 7px;
+    cursor: pointer;
+}
+.modal_title_date{
+    margin-left: 30px;
+    font-size: 10px;
+    margin-top: 10px;
+}
+
+.modal_title_task{
+    margin-left: 30px;
+    font-size: 18px;
+    font-weight: 600;
+}
+.modal_filter_wrap{
+    width: 40%;
+    float: left;
+}
+.modal_filter{
+    width: 85%;
+    margin: auto;
+    margin-top: 10px;
+    font-size: 12px;
+    .modal_filter_select{
+        width: 100%;
+        height: 30px;
+        border: 1.4px solid #000;
+        border-radius: 4px;
+        margin-top: 10px;
+        select{
+            padding: 5px;
+            padding-left: 10px;
+            padding-right: 15px;
+            border: none;
+            outline: none;
+            margin-left: 5px;
+            margin-top: 1px;
+        }
+    }
+}
+.modal_form{
+    width: 85%;
+    margin: auto;
+    position: relative;
+    top: 10px;
+    font-weight: bold;
+    font-size: 12px;
+    input{
+        float: left;
+        width: 91%;
+        margin-bottom: 10px;
+        margin-top: 5px;
+        padding: 10px;
+        
+    }
+    textarea{
+        float: left;
+        width: 91%;
+        padding: 11px;
+        resize:none;
+    }
+    button{
+        float: right;
+        margin-right: 6px;
+        margin-top: 10px;
+        padding: 10px 20px 10px 20px;
+        border: none;
+        border-radius: 4px;
+        background-color: #000;
+        color: #fff;
+        cursor: pointer;
+    }
+}
