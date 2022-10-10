@@ -10,8 +10,7 @@
         border-radius: 5px;
     }
 }
-.filter_dashboard_grid{
-    button{
+    .button_default{
         border: none;
         padding: 11px 15px;
         background-color: #161616;
@@ -23,7 +22,7 @@
             width: 10px;
         }
     }
-}
+
 .check_grid{
     float: right;
     clear: both;

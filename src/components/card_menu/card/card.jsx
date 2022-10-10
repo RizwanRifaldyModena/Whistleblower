@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom';
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
-import { v4 as uuid } from 'uuid';
+// import { v4 as uuid } from 'uuid';
 import './card.scss';
 
 import Box from '@mui/material/Box';
@@ -35,21 +36,21 @@ const itemsFromBackendDone = [
   { id: 'data7', id_task: "80013", tanggal: "12/01/22", investigator: "Zwan", status_task: "7" },
 ];
 const columnsFromBackend = {
-  ['Kolom1']: {
+  ['kolom1']: {
     name: "New",
     backgroundBase: "#12506B",
     backgroundTitle: "#083346",
     totalData: 2,
     items: itemsFromBackendNew
   },
-  ['Kolom2']: {
+  ['kolom2']: {
     name: "On Progress",
     backgroundBase: "#4F126B",
     backgroundTitle: "#150846",
     totalData: 3,
     items: itemsFromBackendProgress
   },
-  ['Kolom3']: {
+  ['kolom3']: {
     name: "Done",
     backgroundBase: "#126B46",
     backgroundTitle: "#08462C",
@@ -98,6 +99,13 @@ const onDragEnd = (result, columns, setColumns) => {
 };
 
 const Card = () => {
+
+  const navigate = useNavigate();
+  useEffect(() => {
+      if (localStorage.getItem('user-token')  === null) {
+          navigate('/login');
+      }
+  }, [])
 
   const [columns, setColumns] = useState(columnsFromBackend);
 
@@ -179,7 +187,6 @@ const Card = () => {
                   <Droppable droppableId={columnId} key={columnId}>
                     {(provided, snapshot) => {
                       return (
-
                         <div
                           {...provided.droppableProps}
                           ref={provided.innerRef}

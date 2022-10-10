@@ -1,7 +1,10 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom';
 import './line_chart.scss'
 import Chart from "chart.js/auto";
 import { Line,Pie } from "react-chartjs-2";
+
+
 
 const Linelabels = ["Januari", "Februari", "Maret", "April"];
 
@@ -62,6 +65,14 @@ const PieChart2 = {
 };
 
 const Line_chart = () => {
+    // alert(localStorage.getItem('user-token'));
+    const navigate = useNavigate();
+    useEffect(() => {
+        if (localStorage.getItem('user-token')  === null) {
+            navigate('/login');
+        }
+    }, [])
+    
     return (
         <div>
             <div className='wrap_chart'>
