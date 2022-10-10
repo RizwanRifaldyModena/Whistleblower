@@ -25,8 +25,11 @@ const List_investigator = () => {
 
     const [items, setItems] = useState([]);
     const navigate = useNavigate();
-    // function for get data user from API
-    const loadDataMaster = async () => {
+
+
+    // const fetch = require('node-fetch');
+
+    const loadDataMaster = async () =>{
         let token = (localStorage.getItem('user-token'));
 
         const response = await fetch("http://devtest.modena.co.id/api-wbs/public/api/master/users", {
@@ -40,6 +43,8 @@ const List_investigator = () => {
         const res = await response.json();
         setItems(res.data);
     }
+    // loadDataMaster().then((res)=>console.log(res));
+    // console.log(items.data);
 
     useEffect(() => {
         if (localStorage.getItem('user-token') === null) {
@@ -70,12 +75,20 @@ const List_investigator = () => {
     return (
         <div>
             <div className='header'>
-
+            {
+                items.map((item) => ( 
+                <div key = { item.id } > 
+                    Full_Name: { item.name }<br/>
+                    User_Email: { item.email } 
+                </div>
+                ))
+            }
                 <div className='title_header text'>
                     <input type={'text'} placeholder={'Search investigator name...'} />
                 </div>
                 <div className='filter_dashboard'>
                     <div className='filter_dashboard_grid'>
+                        {/* <button className='button_default'  onClick={handleOpenModalAddInvs}>Add new investigator <img src='./asset/plus.png' /> </button> */}
                         <button className='button_default' onClick={handleOpenModalAddInvs}>Add new investigator <img src='./asset/plus.png' /> </button>
                     </div>
 
@@ -107,32 +120,49 @@ const List_investigator = () => {
                     </div>
                 </div>
             </div>
-            {
-                items.map((item) => (
-                    <div className='wrap_list_invst' key={item.id}>
-                        <div className='list_invst'>
-                            <div className='title_invst'>
-                                <Checkbox
-                                    {...label}
-                                    style={{ float: 'left' }}
-                                    id="check_all"
-                                    name="check_all"
-                                    value="all"
-                                />
-                                <div className='grid_round'>INV</div>
-                                <div className='grid_title' >
-                                    <b>{item.name}</b><br />
-                                    <p>{item.email}</p>
-                                </div>
-                                <div className='grid_action'>
-                                    <img src='./asset/more.png' onClick={handleClick} />
-                                </div>
-                            </div>
-                        </div>
 
+            <div className='wrap_list_invst'>
+                <div className='list_invst'>
+                    <div className='title_invst'>
+                        <Checkbox
+                            {...label}
+                            style={{ float: 'left' }}
+                            id="check_all"
+                            name="check_all"
+                            value="all"
+                        />
+                        <div className='grid_round'>FE</div>
+                        <div className='grid_title' >
+                            <b>Investigator A</b><br />
+                            <p>MHC SATRIO</p>
+                        </div>
+                        <div className='grid_action'>
+                            <img src='./asset/more.png' onClick={handleClick} />
+                        </div>
                     </div>
-                ))
-            }
+                </div>
+                <div className='list_invst'>
+                    <div className='title_invst'>
+                        <Checkbox
+                            {...label}
+                            style={{ float: 'left' }}
+                            id="check_all"
+                            name="check_all"
+                            value="all"
+                        />
+                        <div className='grid_round'>FE</div>
+                        <div className='grid_title'>
+                            <b>Investigator A</b><br />
+                            <p>MHC SATRIO</p>
+                        </div>
+                        <div className='grid_action'>
+                            <img src='./asset/more.png' onClick={handleClick} />
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
 
             <Menu
                 id="basic-menu"
