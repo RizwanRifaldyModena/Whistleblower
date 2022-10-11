@@ -6,7 +6,7 @@ import './List_investigator.scss'
 import Checkbox from '@mui/material/Checkbox';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
-
+import props from 'prop-types';
 const style = {
     position: 'absolute',
     top: '50%',
@@ -25,9 +25,34 @@ const List_investigator = () => {
 
     const [items, setItems] = useState([]);
     const navigate = useNavigate();
-    // function for get data user from API
+    const [email, setEmail] = useState("");
+    let token = (localStorage.getItem('user-token'));
+
+    async function editUser(userId) {
+        alert(userId);
+    }
+    async function deleteUser(userId) {
+        // alert(userId);
+        if (window.confirm("Are You sure?")) {
+            let result = await fetch("http://devtest.modena.co.id/api-wbs/public/api/master/users/delete/" + userId, {
+                method: 'GET',
+                headers: {
+                    "Content-Type": "Application/json",
+                    "Accept": "Application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+            })
+            result = await result.json();
+            console.log();
+            if (result.success == true) {
+                // loadDataMaster();
+                navigate(0);
+
+            }
+        }
+    }
+
     const loadDataMaster = async () => {
-        let token = (localStorage.getItem('user-token'));
 
         const response = await fetch("http://devtest.modena.co.id/api-wbs/public/api/master/users", {
             method: 'GET',
@@ -38,17 +63,42 @@ const List_investigator = () => {
             }
         })
         const res = await response.json();
+        if (res.error === 'Unauthenticated.') {
+            navigate('/login');
+        }
         setItems(res.data);
     }
+    async function InsertUser() {
+        let data_email = (email);
+        let result = await fetch("http://devtest.modena.co.id/api-wbs/public/api/master/users/create", {
+            method: 'POST',
+            headers: {
+                "Content-Type": "Application/json",
+                "Accept": "Application/json",
+                "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify({ "email": data_email, "role_id": "2" })
+        })
+        result = await result.json();
+        if (result.success === false) {
+            alert(result.data.email);
+        } else {
+            navigate(0);
+        }
+    };
 
     useEffect(() => {
         if (localStorage.getItem('user-token') === null) {
             navigate('/login');
         }
-        loadDataMaster()
+        loadDataMaster('name')
+        console.log(localStorage.getItem('user-token'));
     }, [])
-
+    
+    // check 
     const [isChecked, setIsChecked] = useState(false);
+
+    // modal insert
     const [openModalAddInvs, setOpen] = React.useState(false);
     const handleOpenModalAddInvs = () => setOpen(true);
     const handleCloseModalAddInvs = () => setOpen(false);
@@ -57,15 +107,23 @@ const List_investigator = () => {
     const handleOnChange = () => {
         setIsChecked(!isChecked);
     };
+
     // menu
-    const [anchorEl, setAnchorEl] = React.useState(null);
-    const open = Boolean(anchorEl);
-    const handleClick = (event) => {
+    const [anchorEl, setAnchorEl] = useState(null);
+
+    // track with menu should be opened
+    const [openIndex, setOpenIndex] = useState(-1);
+
+    const handleMenu = (index) => (event) => {
         setAnchorEl(event.currentTarget);
+        setOpenIndex(index); // set current menu index to open
     };
-    const handleClose = () => {
+
+    const handleMenuClose = (event) => {
         setAnchorEl(null);
     };
+
+
 
     return (
         <div>
@@ -108,45 +166,54 @@ const List_investigator = () => {
                 </div>
             </div>
             {
-                items.map((item) => (
+                items.map((item, index) => (
                     <div className='wrap_list_invst' key={item.id}>
                         <div className='list_invst'>
                             <div className='title_invst'>
+                                
                                 <Checkbox
                                     {...label}
                                     style={{ float: 'left' }}
-                                    id="check_all"
-                                    name="check_all"
-                                    value="all"
+                                    value={item.id}
+                                     
+                                    checked= {isChecked ? true :
+                                        false
+                                    }
                                 />
-                                <div className='grid_round'>INV</div>
+                                <div className='grid_round'>{item.name.substring(0, 2).toUpperCase()}</div>
                                 <div className='grid_title' >
-                                    <b>{item.name}</b><br />
+                                    <b>{item.name} </b><br />
                                     <p>{item.email}</p>
                                 </div>
                                 <div className='grid_action'>
-                                    <img src='./asset/more.png' onClick={handleClick} />
+                                    <img src='./asset/more.png' onClick={handleMenu(index)} key={item.id}
+                                        name={'basic-menu' + item.id}
+
+                                    />
                                 </div>
                             </div>
                         </div>
 
                     </div>
+
+
                 ))
             }
 
-            <Menu
-                id="basic-menu"
-                anchorEl={anchorEl}
-                open={open}
-                onClose={handleClose}
-                MenuListProps={{
-                    'aria-labelledby': 'basic-button',
-                }}
-            >
-                <MenuItem onClick={handleClose}>Delete</MenuItem>
-                <MenuItem onClick={handleClose}>Edit</MenuItem>
-            </Menu>
-
+            {
+                items.map((item, index) => (
+                    <Menu
+                        open={Boolean(anchorEl) && index === openIndex}
+                        onClose={handleMenuClose}
+                        {...props}
+                        anchorEl={anchorEl}
+                        key={'menu'+index}
+                    >
+                        <MenuItem onClick={() => deleteUser(item.id)} key={index}>delete </MenuItem>
+                        <MenuItem onClick={() => editUser(item.id)}>Edit</MenuItem>
+                    </Menu>
+                ))
+            }
             <Modal
                 open={openModalAddInvs}
                 onClose={handleCloseModalAddInvs}
@@ -154,8 +221,29 @@ const List_investigator = () => {
                 <Box sx={style} className={'wrap_popup_inv'}>
                     <b>Add new investigator</b><br />
                     <p>Email</p>
-                    <input type={'text'} placeholder={'Enter email'} />
-                    <button>Submit</button>
+                    <input
+                        type={'text'}
+                        placeholder={'Enter email'}
+                        onChange={(e) => setEmail(e.target.value)}
+                    />
+                    <button onClick={InsertUser}>Submit</button>
+                </Box>
+            </Modal>
+
+            
+            <Modal
+                open={openModalAddInvs}
+                onClose={handleCloseModalAddInvs}
+            >
+                <Box sx={style} className={'wrap_popup_inv'}>
+                    <b>Add new investigator</b><br />
+                    <p>Email</p>
+                    <input
+                        type={'text'}
+                        placeholder={'Enter email'}
+                        onChange={(e) => setEmail(e.target.value)}
+                    />
+                    <button onClick={InsertUser}>Submit</button>
                 </Box>
             </Modal>
         </div>

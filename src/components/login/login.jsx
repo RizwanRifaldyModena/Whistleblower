@@ -17,16 +17,14 @@ const Login = () => {
             body: JSON.stringify({ "email": item })
         })
         result = await result.json();
-        // console.log(result)
-        localStorage.setItem('user-email',item);
-        navigate('/confirm');
+        if(result.success == false){
+            alert(result.message);
+        }else{
+            localStorage.setItem('user-email',item);
+            navigate('/confirm');
+        }
     };
 
-    // useEffect(() => {
-    //     if (localStorage.getItem('user-info')) {
-    //         navigate('/confirm');
-    //     }
-    // }, [])
 
     return (
         <div className='wrap_login'>

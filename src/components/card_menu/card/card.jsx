@@ -58,7 +58,7 @@ const columnsFromBackend = {
     items: itemsFromBackendDone
   }
 };
-// console.log(columnsFromBackend[1].items);
+console.log(columnsFromBackend);
 
 const onDragEnd = (result, columns, setColumns) => {
   // console.log(result);
@@ -70,6 +70,8 @@ const onDragEnd = (result, columns, setColumns) => {
     const destColumn = columns[destination.droppableId];
     const sourceItems = [...sourceColumn.items];
     const destItems = [...destColumn.items];
+    // console.log(sourceItems);
+    // console.log(destItems);
     const [removed] = sourceItems.splice(source.index, 1);
     destItems.splice(destination.index, 0, removed);
     setColumns({

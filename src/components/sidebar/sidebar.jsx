@@ -59,7 +59,22 @@ const Sidebar = () => {
                             </a>
                         </NavIcon>
                         <NavText>
-                            Investigator
+                            <a href='/investigator'>
+                                Investigator
+                            </a>
+                        </NavText>
+                    </NavItem>
+                    
+                    <NavItem eventKey="Logout">
+                        <NavIcon>
+                            <a href='/logout'>
+                                <img src="/asset/logout.png" width={'20px'} />
+                            </a>
+                        </NavIcon>
+                        <NavText>
+                            <a href='/logout'>
+                                Logout
+                            </a>
                         </NavText>
                     </NavItem>
                 </SideNav.Nav>
