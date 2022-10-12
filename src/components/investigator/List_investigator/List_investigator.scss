@@ -60,10 +60,13 @@
         padding: 20px 0px;
         margin-left: 20px;
         .grid_round{
+            width: 20px;
+            height: 20px;
             padding: 10px;
             border-radius: 100%;
             background-color:#13C4CF;
             float: left;
+            text-align: center;
         }
         .grid_title{
             margin-top: 2px;

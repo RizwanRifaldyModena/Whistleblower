@@ -38,12 +38,20 @@ body{
     clear: both;
 }
 .status{
+    width: 40px;
     margin-top: -5px;
     margin-left: 20px;
     padding: 3px 10px 3px 10px;
     font-size: 10px;
     float: left;
     border-radius: 3px;
+    text-align: center;
+}
+.status_wrap{
+    width: 200px;
+    height: 20px;
+    background-color: #34B53A;
+    float: left;
 }
 .title_status{
     &_1 {
@@ -76,8 +84,8 @@ body{
     }
 }
 .arrow{
-    position: relative;
-    left:80px;
+    float: left;
+    margin-left: 70px;
 }
 .title_investigator{
     background-color: #EBEBEB;
@@ -133,7 +141,11 @@ body{
             border: none;
             outline: none;
             margin-left: 5px;
+            position: relative;
             margin-top: 1px;
+            background: #fff;
+            z-index: 10;
+            text-align: center;
         }
     }
 }
@@ -144,9 +156,9 @@ body{
     top: 10px;
     font-weight: bold;
     font-size: 12px;
-    input{
+    select{
         float: left;
-        width: 91%;
+        width: 100%;
         margin-bottom: 10px;
         margin-top: 5px;
         padding: 10px;
@@ -157,6 +169,7 @@ body{
         width: 91%;
         padding: 11px;
         resize:none;
+        outline: none;
     }
     button{
         float: right;

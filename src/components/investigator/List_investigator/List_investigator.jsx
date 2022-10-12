@@ -91,7 +91,7 @@ const List_investigator = () => {
         if (localStorage.getItem('user-token') === null) {
             navigate('/login');
         }
-        loadDataMaster('name')
+        loadDataMaster()
         console.log(localStorage.getItem('user-token'));
     }, [])
     

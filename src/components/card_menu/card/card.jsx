@@ -14,7 +14,7 @@ const style = {
   left: '50%',
   transform: 'translate(-50%, -50%)',
   width: 400,
-  height: 380,
+  height: 400,
   background: '#fff',
   outline: 'none',
   borderRadius: '5px'
@@ -102,18 +102,41 @@ const onDragEnd = (result, columns, setColumns) => {
 
 const Card = () => {
 
+  let token = (localStorage.getItem('user-token'));
+
   const navigate = useNavigate();
-  useEffect(() => {
-      if (localStorage.getItem('user-token')  === null) {
-          navigate('/login');
-      }
-  }, [])
 
   const [columns, setColumns] = useState(columnsFromBackend);
 
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const [items, setItems] = useState([]);
+  const loadDataMaster = async () => {
+
+    const response = await fetch("http://devtest.modena.co.id/api-wbs/public/api/master/users", {
+      method: 'GET',
+      headers: {
+        "Content-Type": "Application/json",
+        "Accept": "Application/json",
+        "Authorization": `Bearer ${token}`
+      }
+    })
+    const res = await response.json();
+    if (res.error === 'Unauthenticated.') {
+      navigate('/login');
+    }
+    setItems(res.data);
+  }
+
+  // auto load here
+  useEffect(() => {
+    if (localStorage.getItem('user-token') === null) {
+      navigate('/login');
+    }
+    loadDataMaster()
+
+  }, [])
 
   return (
     <div className="wrapper_card">
@@ -135,16 +158,18 @@ const Card = () => {
           </div>
           <div className="modal_filter">
             <div className="modal_filter_wrap">
-              Status Laporan <br/>
+              Status Laporan <br />
               <div className="modal_filter_select">
                 <select>
-                  <option>On Progress</option>
+                  <option value={'1'}>New</option>
+                  <option value={'2'}>On Progress</option>
+                  <option value={'3'}>Done</option>
                 </select>
               </div>
             </div>
-            
+
             <div className="modal_filter_wrap ml-1">
-              Status Tindak Lanjut <br/>
+              Status Tindak Lanjut <br />
               <div className="modal_filter_select">
                 <select className="ml-s-1">
                   <option>Receive</option>
@@ -152,12 +177,19 @@ const Card = () => {
               </div>
             </div>
           </div>
-          
+
           <div className="modal_form">
-            Investigator<br/>
-            <input type={'text'} placeholder={'Input Email'} /><br/>
-            
-            Description<br/>
+            Investigator<br />
+            <select name='investigator' id="investigator"> 
+
+              {
+                items.map((item, index) => (
+                  <option value={item.id}>{item.name}</option>
+                ))
+              }
+            </select><br />
+
+            Description<br />
             <textarea></textarea>
             <button>Save</button>
           </div>
@@ -232,6 +264,7 @@ const Card = () => {
                                       <div className="title_date">
                                         {item.tanggal}
                                       </div>
+
                                       {item.status_task == '1' ? <div className="status title_status_1">Receive</div> : null}
                                       {item.status_task == '2' ? <div className="status title_status_2">Review</div> : null}
                                       {item.status_task == '3' ? <div className="status title_status_3">Receive</div> : null}
