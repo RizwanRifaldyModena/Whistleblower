@@ -138,7 +138,7 @@ const Card = () => {
 
   const loadDataCard = async () => {
 
-    const response = await fetch("http://devtest.modena.co.id/api-wbs/public/api/master/status", {
+    const response = await fetch("http://devtest.modena.co.id/api-wbs/public/api/whistle-blower/get-assigned-tasks/?country_code=id", {
       method: 'GET',
       headers: {
         "Content-Type": "Application/json",
@@ -162,9 +162,6 @@ const Card = () => {
     }
     loadDataCountry()
     loadDataCard()
-    
-
-
   }, [])
 
   return (
