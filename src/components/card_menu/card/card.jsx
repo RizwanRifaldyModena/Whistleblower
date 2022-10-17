@@ -20,87 +20,51 @@ const style = {
   borderRadius: '5px'
 };
 
-const itemsFromBackendNew = [
-  { id: 'data1', id_task: "80012", tanggal: "12/01/22", investigator: "Zwan", status_task: "1" },
-  { id: 'data2', id_task: "80013", tanggal: "12/01/22", investigator: "Zwan", status_task: "2" },
-];
-
-const itemsFromBackendProgress = [
-  { id: 'data3', id_task: "80012", tanggal: "12/01/22", investigator: "Zwan", status_task: "3" },
-  { id: 'data4', id_task: "80013", tanggal: "12/01/22", investigator: "Zwan", status_task: "4" },
-  { id: 'data5', id_task: "80013", tanggal: "12/01/22", investigator: "Zwan", status_task: "5" },
-];
-
-const itemsFromBackendDone = [
-  { id: 'data6', id_task: "80012", tanggal: "12/01/22", investigator: "Zwan", status_task: "6" },
-  { id: 'data7', id_task: "80013", tanggal: "12/01/22", investigator: "Zwan", status_task: "7" },
-];
-const columnsFromBackend = {
-  ['kolom1']: {
-    name: "New",
-    backgroundBase: "#12506B",
-    backgroundTitle: "#083346",
-    totalData: 2,
-    items: itemsFromBackendNew
-  },
-  ['kolom2']: {
-    name: "On Progress",
-    backgroundBase: "#4F126B",
-    backgroundTitle: "#150846",
-    totalData: 3,
-    items: itemsFromBackendProgress
-  },
-  ['kolom3']: {
-    name: "Done",
-    backgroundBase: "#126B46",
-    backgroundTitle: "#08462C",
-    totalData: 2,
-    items: itemsFromBackendDone
-  }
-};
-console.log(columnsFromBackend);
-
-const onDragEnd = (result, columns, setColumns) => {
-  // console.log(result);
-  if (!result.destination) return;
-  const { source, destination } = result;
-
-  if (source.droppableId !== destination.droppableId) {
-    const sourceColumn = columns[source.droppableId];
-    const destColumn = columns[destination.droppableId];
-    const sourceItems = [...sourceColumn.items];
-    const destItems = [...destColumn.items];
-    // console.log(sourceItems);
-    // console.log(destItems);
-    const [removed] = sourceItems.splice(source.index, 1);
-    destItems.splice(destination.index, 0, removed);
-    setColumns({
-      ...columns,
-      [source.droppableId]: {
-        ...sourceColumn,
-        items: sourceItems
-      },
-      [destination.droppableId]: {
-        ...destColumn,
-        items: destItems
-      }
-    });
-  } else {
-    const column = columns[source.droppableId];
-    const copiedItems = [...column.items];
-    const [removed] = copiedItems.splice(source.index, 1);
-    copiedItems.splice(destination.index, 0, removed);
-    setColumns({
-      ...columns,
-      [source.droppableId]: {
-        ...column,
-        items: copiedItems
-      }
-    });
-  }
-};
-
 const Card = () => {
+  // const [cardNew, setCardNew] = useState([]);
+
+
+
+  const [cardNew, setCardNew] = useState([
+    { id: 'data3', id_task: "80012", tanggal: "12/01/22", investigator: "Zwan", status_task: "1" },
+    { id: 'data4', id_task: "80013", tanggal: "12/01/22", investigator: "Zwan", status_task: "2" },
+  ])
+  const [cardOnProgress, setCardOnProgress] = useState([
+    { id: 'data3', id_task: "80012", tanggal: "12/01/22", investigator: "Zwan", status_task: "3" },
+    { id: 'data4', id_task: "80013", tanggal: "12/01/22", investigator: "Zwan", status_task: "4" },
+    { id: 'data5', id_task: "80013", tanggal: "12/01/22", investigator: "Zwan", status_task: "5" }
+  ]);
+  const [cardDone, setCardDone] = useState([
+    { id: 'data6', id_task: "80012", tanggal: "12/01/22", investigator: "Zwan", status_task: "6" },
+    { id: 'data7', id_task: "80013", tanggal: "12/01/22", investigator: "Zwan", status_task: "7" }
+  ]);
+  // console.log(shopCart);
+
+
+  const columnsFromBackend = {
+    ['new']: {
+      name: "New",
+      backgroundBase: "#12506B",
+      backgroundTitle: "#083346",
+      totalData: 2,
+      items: cardNew
+    },
+    ['progress']: {
+      name: "On Progress",
+      backgroundBase: "#4F126B",
+      backgroundTitle: "#150846",
+      totalData: 3,
+      items: cardOnProgress
+    },
+    ['done']: {
+      name: "Done",
+      backgroundBase: "#126B46",
+      backgroundTitle: "#08462C",
+      totalData: 2,
+      items: cardDone
+    }
+  };
+
 
   let token = (localStorage.getItem('user-token'));
 
@@ -112,7 +76,49 @@ const Card = () => {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const [items, setItems] = useState([]);
-  const loadDataMaster = async () => {
+
+
+  const onDragEnd = (result, columns, setColumns) => {
+    // console.log(result);
+    if (!result.destination) return;
+    const { source, destination } = result;
+
+    if (source.droppableId !== destination.droppableId) {
+      const sourceColumn = columns[source.droppableId];
+      const destColumn = columns[destination.droppableId];
+      const sourceItems = [...sourceColumn.items];
+      const destItems = [...destColumn.items];
+      const [removed] = sourceItems.splice(source.index, 1);
+      destItems.splice(destination.index, 0, removed);
+      setOpen(true);
+      setColumns({
+        ...columns,
+        [source.droppableId]: {
+          ...sourceColumn,
+          items: sourceItems
+        },
+        [destination.droppableId]: {
+          ...destColumn,
+          items: destItems
+        }
+      });
+    } else {
+      const column = columns[source.droppableId];
+      const copiedItems = [...column.items];
+      const [removed] = copiedItems.splice(source.index, 1);
+      copiedItems.splice(destination.index, 0, removed);
+      setColumns({
+        ...columns,
+        [source.droppableId]: {
+          ...column,
+          items: copiedItems
+        }
+      });
+    }
+  };
+
+
+  const loadDataCountry = async () => {
 
     const response = await fetch("http://devtest.modena.co.id/api-wbs/public/api/master/users", {
       method: 'GET',
@@ -129,18 +135,40 @@ const Card = () => {
     setItems(res.data);
   }
 
+
+  const loadDataCard = async () => {
+
+    const response = await fetch("http://devtest.modena.co.id/api-wbs/public/api/master/status", {
+      method: 'GET',
+      headers: {
+        "Content-Type": "Application/json",
+        "Accept": "Application/json",
+        "Authorization": `Bearer ${token}`
+      }
+    })
+    const res = await response.json();
+    
+    if (res.error === 'Unauthenticated.') {
+      navigate('/login');
+    }
+    
+    console.log(res)
+  }
+
   // auto load here
   useEffect(() => {
     if (localStorage.getItem('user-token') === null) {
       navigate('/login');
     }
-    loadDataMaster()
+    loadDataCountry()
+    loadDataCard()
+    
+
 
   }, [])
 
   return (
     <div className="wrapper_card">
-
       <Modal
         open={open}
         onClose={handleClose}
@@ -173,6 +201,11 @@ const Card = () => {
               <div className="modal_filter_select">
                 <select className="ml-s-1">
                   <option>Receive</option>
+                  <option>Review</option>
+                  <option>Assign</option>
+                  <option>Report</option>
+                  <option>Finish</option>
+                  <option>Reject</option>
                 </select>
               </div>
             </div>
@@ -180,7 +213,7 @@ const Card = () => {
 
           <div className="modal_form">
             Investigator<br />
-            <select name='investigator' id="investigator"> 
+            <select name='investigator' id="investigator">
 
               {
                 items.map((item, index) => (

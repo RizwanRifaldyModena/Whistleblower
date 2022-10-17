@@ -65,12 +65,13 @@ const PieChart2 = {
 };
 
 const Line_chart = () => {
-    // alert(localStorage.getItem('user-token'));
+
     const navigate = useNavigate();
     useEffect(() => {
         if (localStorage.getItem('user-token')  === null) {
             navigate('/login');
         }
+        console.log(localStorage.getItem('user-token'));
     }, [])
     
     return (

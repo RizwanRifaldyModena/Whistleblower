@@ -26,11 +26,9 @@ const List_investigator = () => {
     const [items, setItems] = useState([]);
     const navigate = useNavigate();
     const [email, setEmail] = useState("");
+    const [DataSearch, setSearch] = useState("");
     let token = (localStorage.getItem('user-token'));
 
-    async function editUser(userId) {
-        alert(userId);
-    }
     async function deleteUser(userId) {
         // alert(userId);
         if (window.confirm("Are You sure?")) {
@@ -54,7 +52,7 @@ const List_investigator = () => {
 
     const loadDataMaster = async () => {
 
-        const response = await fetch("http://devtest.modena.co.id/api-wbs/public/api/master/users", {
+        const response = await fetch("http://devtest.modena.co.id/api-wbs/public/api/master/users?role=Investigator&search="+DataSearch, {
             method: 'GET',
             headers: {
                 "Content-Type": "Application/json",
@@ -68,6 +66,12 @@ const List_investigator = () => {
         }
         setItems(res.data);
     }
+    
+    const SearchData = (txtSearch) => {
+        setSearch(txtSearch)
+        loadDataMaster(DataSearch)
+    };
+
     async function InsertUser() {
         let data_email = (email);
         let result = await fetch("http://devtest.modena.co.id/api-wbs/public/api/master/users/create", {
@@ -130,7 +134,11 @@ const List_investigator = () => {
             <div className='header'>
 
                 <div className='title_header text'>
-                    <input type={'text'} placeholder={'Search investigator name...'} />
+                    <input 
+                        type={'text'} 
+                        placeholder={'Search investigator name...'} 
+                        onChange={(e) => SearchData(e.target.value)}
+                    />
                 </div>
                 <div className='filter_dashboard'>
                     <div className='filter_dashboard_grid'>
@@ -193,10 +201,7 @@ const List_investigator = () => {
                                 </div>
                             </div>
                         </div>
-
                     </div>
-
-
                 ))
             }
 
@@ -210,7 +215,7 @@ const List_investigator = () => {
                         key={'menu'+index}
                     >
                         <MenuItem onClick={() => deleteUser(item.id)} key={index}>delete </MenuItem>
-                        <MenuItem onClick={() => editUser(item.id)}>Edit</MenuItem>
+                        {/* <MenuItem onClick={() => editUser(item.id)}>Edit</MenuItem> */}
                     </Menu>
                 ))
             }
