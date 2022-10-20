@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
-// import { v4 as uuid } from 'uuid';
 import './card.scss';
-
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
+import Select from 'react-select'
 
 
 const style = {
@@ -14,72 +13,109 @@ const style = {
   left: '50%',
   transform: 'translate(-50%, -50%)',
   width: 400,
-  height: 400,
+  height: 420,
   background: '#fff',
   outline: 'none',
   borderRadius: '5px'
 };
 
 const Card = () => {
-  // const [cardNew, setCardNew] = useState([]);
-
-
-
-  const [cardNew, setCardNew] = useState([
-    { id: 'data3', id_task: "80012", tanggal: "12/01/22", investigator: "Zwan", status_task: "1" },
-    { id: 'data4', id_task: "80013", tanggal: "12/01/22", investigator: "Zwan", status_task: "2" },
-  ])
-  const [cardOnProgress, setCardOnProgress] = useState([
-    { id: 'data3', id_task: "80012", tanggal: "12/01/22", investigator: "Zwan", status_task: "3" },
-    { id: 'data4', id_task: "80013", tanggal: "12/01/22", investigator: "Zwan", status_task: "4" },
-    { id: 'data5', id_task: "80013", tanggal: "12/01/22", investigator: "Zwan", status_task: "5" }
-  ]);
-  const [cardDone, setCardDone] = useState([
-    { id: 'data6', id_task: "80012", tanggal: "12/01/22", investigator: "Zwan", status_task: "6" },
-    { id: 'data7', id_task: "80013", tanggal: "12/01/22", investigator: "Zwan", status_task: "7" }
-  ]);
-  // console.log(shopCart);
-
-
-  const columnsFromBackend = {
-    ['new']: {
-      name: "New",
-      backgroundBase: "#12506B",
-      backgroundTitle: "#083346",
-      totalData: 2,
-      items: cardNew
-    },
-    ['progress']: {
-      name: "On Progress",
-      backgroundBase: "#4F126B",
-      backgroundTitle: "#150846",
-      totalData: 3,
-      items: cardOnProgress
-    },
-    ['done']: {
-      name: "Done",
-      backgroundBase: "#126B46",
-      backgroundTitle: "#08462C",
-      totalData: 2,
-      items: cardDone
-    }
-  };
-
 
   let token = (localStorage.getItem('user-token'));
 
   const navigate = useNavigate();
-
-  const [columns, setColumns] = useState(columnsFromBackend);
-
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const [items, setItems] = useState([]);
+  const [dataToPopUp, setdataToPopUp] = useState([]);
 
 
+  const loadDataInvestigator = async () => {
+
+    const response = await fetch("http://devtest.modena.co.id/api-wbs/public/api/whistle-blower/signing-to-investigator/list-investigators", {
+      method: 'GET',
+      headers: {
+        "Content-Type": "Application/json",
+        "Accept": "Application/json",
+        "Authorization": `Bearer ${token}`
+      }
+    })
+    const res = await response.json();
+    if (res.error === 'Unauthenticated.') {
+      navigate('/login');
+    }
+    setItems(res.data);
+
+  }
+  async function openPopUpData(data) {
+    handleOpen();
+    setdataToPopUp(data)
+  }
+  const loadDataCard = async () => {
+
+    const response = await fetch("http://devtest.modena.co.id/api-wbs/public/api/whistle-blower/get-assigned-tasks?country_code=id", {
+      method: 'GET',
+      headers: {
+        "Content-Type": "Application/json",
+        "Accept": "Application/json",
+        "Authorization": `Bearer ${token}`
+      }
+    }).then((response) => response.json())
+
+    if (response.error === 'Unauthenticated.') {
+      navigate('/login');
+    }
+    const newData = response.data[0].whistle_blower;
+    const onProgressData = response.data[1].whistle_blower;
+    const doneData = response.data[2].whistle_blower;
+    // console.log(response)
+    const countNew = newData.length
+    const countOnProgress = onProgressData.length
+    const countDone = doneData.length
+
+    const columnsFromBackend = {
+      ['new']: {
+        name: "New",
+        backgroundBase: "#12506B",
+        backgroundTitle: "#083346",
+        totalData: countNew,
+        items: newData,
+      },
+      ['progress']: {
+        name: "On Progress",
+        backgroundBase: "#4F126B",
+        backgroundTitle: "#150846",
+        totalData: countOnProgress,
+        items: onProgressData
+      },
+      ['done']: {
+        name: "Done",
+        backgroundBase: "#126B46",
+        backgroundTitle: "#08462C",
+        totalData: countDone,
+        items: doneData
+      }
+    };
+    setColumns(columnsFromBackend)
+  }
+
+
+  useEffect(() => {
+    if (localStorage.getItem('user-token') === null) {
+      navigate('/login');
+    }
+    loadDataInvestigator()
+    loadDataCard()
+    console.log(localStorage.getItem('user-token'))
+  }, [])
+
+
+
+  const [columns, setColumns] = useState([]);
   const onDragEnd = (result, columns, setColumns) => {
-    // console.log(result);
+
+
     if (!result.destination) return;
     const { source, destination } = result;
 
@@ -90,7 +126,24 @@ const Card = () => {
       const destItems = [...destColumn.items];
       const [removed] = sourceItems.splice(source.index, 1);
       destItems.splice(destination.index, 0, removed);
-      setOpen(true);
+      // openPopUpData(result)
+      // setOpen(true);
+
+      // console.log(result);
+      const targetMove = destColumn.name;
+
+
+      if (targetMove === 'New') {
+        moveWBS(result.draggableId, 1)
+      } else if (targetMove === 'On Progress') {
+        moveWBS(result.draggableId, 2)
+      } else if (targetMove === 'Done') {
+        moveWBS(result.draggableId, 3)
+      }
+      // setCodeWBS()
+
+
+
       setColumns({
         ...columns,
         [source.droppableId]: {
@@ -118,52 +171,20 @@ const Card = () => {
   };
 
 
-  const loadDataCountry = async () => {
-
-    const response = await fetch("http://devtest.modena.co.id/api-wbs/public/api/master/users", {
-      method: 'GET',
+  async function moveWBS(codeWBS, ColumnTarget) {
+    let result = await fetch("http://devtest.modena.co.id/api-wbs/public/api/whistle-blower/change-status", {
+      method: 'POST',
       headers: {
         "Content-Type": "Application/json",
         "Accept": "Application/json",
         "Authorization": `Bearer ${token}`
-      }
+      },
+      body: JSON.stringify({ "report_code": codeWBS, "status": ColumnTarget })
     })
-    const res = await response.json();
-    if (res.error === 'Unauthenticated.') {
-      navigate('/login');
-    }
-    setItems(res.data);
+    result = await result.json();
+    loadDataCard();
   }
-
-
-  const loadDataCard = async () => {
-
-    const response = await fetch("http://devtest.modena.co.id/api-wbs/public/api/whistle-blower/get-assigned-tasks?country_code=id", {
-      method: 'GET',
-      headers: {
-        "Content-Type": "Application/json",
-        "Accept": "Application/json",
-        "Authorization": `Bearer ${token}`
-      }
-    })
-    const res = await response.json();
-    
-    if (res.error === 'Unauthenticated.') {
-      navigate('/login');
-    }
-    
-    console.log(res)
-  }
-
-  // auto load here
-  useEffect(() => {
-    if (localStorage.getItem('user-token') === null) {
-      navigate('/login');
-    }
-    loadDataCountry()
-    loadDataCard()
-  }, [])
-
+  // console.log(totalWBS)
   return (
     <div className="wrapper_card">
       <Modal
@@ -172,20 +193,25 @@ const Card = () => {
       >
         <Box sx={style}>
           <div className="top_modal_wrap">
-            <div className="status title_status_6">Corruption</div>
+            {open === true ?
+              dataToPopUp.whistle_blower_category.map((item, index) => (
+                <div className="status_popup title_status_6" key={index}>{item.category}</div>
+              ))
+              : null}
+
             <img src="./asset/close.png" className="close_modal" onClick={handleClose} />
           </div>
           <div className="modal_title_date">
-            12/01/2022
+            {dataToPopUp.generate_date}
           </div>
           <div className="modal_title_task">
-            80012
+            {dataToPopUp.report_code}
           </div>
           <div className="modal_filter">
             <div className="modal_filter_wrap">
               Status Laporan <br />
               <div className="modal_filter_select">
-                <select>
+                <select key={'status_laporan'}>
                   <option value={'1'}>New</option>
                   <option value={'2'}>On Progress</option>
                   <option value={'3'}>Done</option>
@@ -196,7 +222,7 @@ const Card = () => {
             <div className="modal_filter_wrap ml-1">
               Status Tindak Lanjut <br />
               <div className="modal_filter_select">
-                <select className="ml-s-1">
+                <select className="ml-s-1" key={'status_tindak_lanjut'}>
                   <option>Receive</option>
                   <option>Review</option>
                   <option>Assign</option>
@@ -210,14 +236,30 @@ const Card = () => {
 
           <div className="modal_form">
             Investigator<br />
-            <select name='investigator' id="investigator">
+            <Select
+              options={items}
+              isMulti
+              className='select2'
+              defaultValue={{ label: "Ade Harseno", value: 0 }}
+              styles={{
+                control: (base, state) => ({
+                  ...base,
+                  boxShadow: "none",
+                  "&:focus-within": {
+                    borderColor: "#000",
+                    boxShadow: "none",
+                  }
+                })
+              }}
+            />
+            {/* <select name='investigator' id="investigator" key="investigator">
 
               {
                 items.map((item, index) => (
-                  <option value={item.id}>{item.name}</option>
+                  <option value={item.id} key={item.id}>{item.name}</option>
                 ))
               }
-            </select><br />
+            </select><br /> */}
 
             Description<br />
             <textarea></textarea>
@@ -228,14 +270,9 @@ const Card = () => {
 
 
       <div style={{ display: "flex", height: "100%" }}>
-        <DragDropContext
-          onDragEnd={result => onDragEnd(result, columns, setColumns)}
-        >
+        <DragDropContext onDragEnd={result => onDragEnd(result, columns, setColumns)}>
           {Object.entries(columns).map(([columnId, column], index) => {
-            // const no = 1;
-
             return (
-
               <div
                 style={{
                   display: "flex",
@@ -262,12 +299,13 @@ const Card = () => {
                             width: 250,
                             minHeight: 0
                           }}
+                          key={columnId}
                         >
                           {column.items.map((item, index) => {
                             return (
                               <Draggable
-                                key={item.id}
-                                draggableId={item.id}
+                                key={item.report_code}
+                                draggableId={item.report_code}
                                 index={index}
                               >
 
@@ -285,33 +323,39 @@ const Card = () => {
                                         borderRadius: '5px',
                                         backgroundColor: snapshot.isDragging
                                           ? "#fff" // affter
-                                          : "#fff", // before
+                                          : "#fff", // before;
                                         color: "#000",
                                         ...provided.draggableProps.style
                                       }}
-                                      onClick={handleOpen}
+                                      onClick={() => openPopUpData(item)}
                                     >
+                                      <img src='/asset/arrow.png' className="arrow_img" style={{ cursor: 'pointer' }} />
                                       <div className="title_date">
-                                        {item.tanggal}
+                                        {item.generate_date}
                                       </div>
 
-                                      {item.status_task == '1' ? <div className="status title_status_1">Receive</div> : null}
-                                      {item.status_task == '2' ? <div className="status title_status_2">Review</div> : null}
-                                      {item.status_task == '3' ? <div className="status title_status_3">Receive</div> : null}
-                                      {item.status_task == '4' ? <div className="status title_status_4">Assign</div> : null}
-                                      {item.status_task == '5' ? <div className="status title_status_5">Report</div> : null}
-                                      {item.status_task == '6' ? <div className="status title_status_6">Finish</div> : null}
-                                      {item.status_task == '7' ? <div className="status title_status_7">Rejected</div> : null}
-                                      {item.status_task == '8' ? <div className="status title_status_6">Corruption</div> : null}
+                                      {item.status_id == '1' ? <div className="status title_status_1">Receive</div> : null}
+                                      {item.status_id == '2' ? <div className="status title_status_2">Review</div> : null}
+                                      {item.status_id == '3' ? <div className="status title_status_3">Receive</div> : null}
+                                      {item.status_id == '4' ? <div className="status title_status_4">Assign</div> : null}
+                                      {item.status_id == '5' ? <div className="status title_status_5">Report</div> : null}
+                                      {item.status_id == '6' ? <div className="status title_status_6">Finish</div> : null}
+                                      {item.status_id == '7' ? <div className="status title_status_7">Rejected</div> : null}
+                                      {item.status_id == '8' ? <div className="status title_status_6">Corruption</div> : null}
 
-                                      <img src='/asset/arrow.png' className="arrow" style={{ cursor: 'pointer' }} />
+
 
                                       <div className="title_task">
-                                        {item.id_task}
+                                        {item.report_code}
                                       </div>
 
                                       <div className="title_investigator">
-                                        Investigator : {item.investigator}
+                                        Investigator :
+                                        {
+                                          item.whistle_blower_investigator.map((item, index) => (
+                                            <b key={index}> {item.investigator_name}</b>
+                                          ))
+                                        }
                                       </div>
 
                                     </div>

@@ -20,9 +20,10 @@ const Login = () => {
         })
         result = await result.json();
         var keys = Object.keys(result);
-        // console.log()
+        // console.log(result)
         if(result.success === true){
             localStorage.setItem('user-token', result.data['token']);
+            localStorage.setItem('username', result.data['name']);
             navigate('/');
         }else{
             console.log("Login gagal, cek kembali OTP");

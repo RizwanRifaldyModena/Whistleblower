@@ -6,7 +6,6 @@ const Main_dashboard = () => {
   return (
     <div>
         <Sidebar/>
-        <Header/>
         <Line_chart/>
     </div>
   )

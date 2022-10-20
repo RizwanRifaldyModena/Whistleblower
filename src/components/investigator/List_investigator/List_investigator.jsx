@@ -52,7 +52,7 @@ const List_investigator = () => {
 
     const loadDataMaster = async () => {
 
-        const response = await fetch("http://devtest.modena.co.id/api-wbs/public/api/master/users?role=Investigator&search="+DataSearch, {
+        const response = await fetch("http://devtest.modena.co.id/api-wbs/public/api/master/users?search="+DataSearch, {
             method: 'GET',
             headers: {
                 "Content-Type": "Application/json",
@@ -145,11 +145,11 @@ const List_investigator = () => {
                         <button className='button_default' onClick={handleOpenModalAddInvs}>Add new investigator <img src='./asset/plus.png' /> </button>
                     </div>
 
-                    <div className='filter_dashboard_grid'>
+                    {/* <div className='filter_dashboard_grid'>
                         <select className='select'>
                             <option>MHC Satrio</option>
                         </select>
-                    </div>
+                    </div> */}
 
                     <div className='check_grid'>
 

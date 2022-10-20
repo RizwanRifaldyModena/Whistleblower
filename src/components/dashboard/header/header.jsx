@@ -6,9 +6,10 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import format from "date-fns/format";
 import { addDays } from 'date-fns';
+
 const Header = () => {
-  const [startDate, setStartDate] = useState(new Date());
-  const [endDate, setEndDate] = useState(new Date());
+  const [startDate, setStartDate] = useState(new Date('01-17-2021'));
+  const [endDate, setEndDate] = useState(new Date('02-17-2021'));
   const [isOpen, setIsOpen] = useState(false);
   const [isOpen2, setIsOpen2] = useState(false);
   const navigate = useNavigate();
@@ -25,6 +26,7 @@ const Header = () => {
     setIsOpen(!isOpen);
   };
   const handleChange2 = (e) => {
+    alert(e);
     setIsOpen2(!isOpen2);
     setEndDate(e);
   };
@@ -59,6 +61,7 @@ const Header = () => {
     }
     loadDataCountry()
   }, [])
+
   return (
     <div className='header'>
       <div className='title_header text'>

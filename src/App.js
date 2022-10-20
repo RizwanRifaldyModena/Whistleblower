@@ -7,12 +7,14 @@ import Logout from "./components/logout/logout";
 import Confirm_token from "./components/confirm/confirm";
 import Main_card from "./components/main_card";
 import Main_investigator from "./components/main_investigator";
+import Tes from "./components/tes/tes";
 function App() {
   return (
     <div>
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Main_dashboard />} />  
+          <Route path="/tes" element={<Tes />} />  
           <Route path="/card_list" element={<Main_card />} />  
           <Route path="/login" element={<Login />} />  
           <Route path="/logout" element={<Logout />} />  

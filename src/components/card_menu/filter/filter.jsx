@@ -9,10 +9,12 @@ const Filter = () => {
   
   const [startDate, setStartDate] = useState(new Date());
   const [isOpen, setIsOpen] = useState(false);
+  const [DateMonth, setDateMonth] = useState([]);
   const navigate = useNavigate();
-
+  
   const [itemsCountry, setItemsCountry] = useState([]);
   let token = (localStorage.getItem('user-token'));
+  // console.log(DateMonth)
 
   const handleChange = (e) => {
     setIsOpen(!isOpen);
@@ -58,7 +60,11 @@ const Filter = () => {
           {isOpen && (
             <DatePicker 
             selected={startDate} 
-            onChange={handleChange} 
+            onChange={(date) => {
+              const d = new Date(date).toLocaleDateString('fr-FR');
+              // console.log(d);
+              setDateMonth(d);
+            }}
             maxDate={addDays(new Date(), 5)}
             showMonthYearPicker
             className='select'
