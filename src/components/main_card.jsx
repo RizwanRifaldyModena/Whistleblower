@@ -8,8 +8,8 @@ const Main_card = () => {
   return (
     <div>
         <Sidebar/>
-        <Header/>
-        <Filter/>
+        {/* <Header/> */}
+        {/* <Filter/> */}
         <Card/>
     </div>
   )

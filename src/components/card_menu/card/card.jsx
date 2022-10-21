@@ -5,14 +5,18 @@ import './card.scss';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import Select from 'react-select'
-
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import format from "date-fns/format";
+import { addDays } from 'date-fns';
+import { da } from 'date-fns/locale';
 
 const style = {
   position: 'absolute',
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: 400,
+  width: 700,
   height: 420,
   background: '#fff',
   outline: 'none',
@@ -20,9 +24,87 @@ const style = {
 };
 
 const Card = () => {
+  // Header  
+  const [Categories, setCategories] = useState([]);
+  const [TotalCategories, setTotalCategories] = useState([]);
+  const [FilterCategory, setFilterCategory] = useState([]);
+  const [FilterCountry, setFilterCountry] = useState([]);
+  const loadDataCategory = async () => {
 
+    const response = await fetch("http://devtest.modena.co.id/api-wbs/public/api/master/categories", {
+      method: 'GET',
+      headers: {
+        "Content-Type": "Application/json",
+        "Accept": "Application/json",
+        "Authorization": `Bearer ${token}`
+      }
+    })
+    const res = await response.json();
+    if (res.error === 'Unauthenticated.') {
+      navigate('/login');
+    }
+    setCategories(res.data);
+  }
+  //Filter
+
+  const [startDate, setStartDate] = useState(new Date());
+  const [isOpen, setIsOpen] = useState(false);
+  const [DateMonth, setDateMonth] = useState(new Date());
+  const [DataSearch, setSearch] = useState([]);
+  const [itemsCountry, setItemsCountry] = useState([]);
+  // console.log()
+
+  const handleChange = (e) => {
+    setIsOpen(!isOpen);
+    setStartDate(e);
+  };
+  const handleClick = (e) => {
+    e.preventDefault();
+    setIsOpen(!isOpen);
+  };
+
+  const SearchData = (txtSearch) => {
+    setSearch(txtSearch)
+    loadDataCard()
+    // console.log(txtSearch)
+  };
+  const chooseCategory = (search) => {
+    // alert(search)
+    setFilterCategory(search)
+    loadDataCard()
+  }
+  const choosePeriode = (e) => {
+    setIsOpen(!isOpen);
+    setStartDate(e);
+    loadDataCard()
+  }
+  const chooseContry = (search) => {
+    // alert(search)
+    setFilterCountry(search)
+    loadDataCard()
+  }
+  const loadDataCountry = async () => {
+
+    const response = await fetch("http://devtest.modena.co.id/api-wbs/public/api/master/countries", {
+      method: 'GET',
+      headers: {
+        "Content-Type": "Application/json",
+        "Accept": "Application/json",
+        "Authorization": `Bearer ${token}`
+      }
+    })
+    const res = await response.json();
+    // console.log(res.data);
+    if (res.error === 'Unauthenticated.') {
+      navigate('/login');
+    }
+    setItemsCountry(res.data);
+  }
+
+
+  // card DND
   let token = (localStorage.getItem('user-token'));
-
+  // console.log(token)
   const navigate = useNavigate();
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
@@ -49,12 +131,14 @@ const Card = () => {
 
   }
   async function openPopUpData(data) {
+    // console.log(data)
     handleOpen();
     setdataToPopUp(data)
   }
   const loadDataCard = async () => {
-
-    const response = await fetch("http://devtest.modena.co.id/api-wbs/public/api/whistle-blower/get-assigned-tasks?country_code=id", {
+    const filterDate = format(startDate, 'yyyy-MM');
+    // alert(filterDate)
+    const response = await fetch("http://devtest.modena.co.id/api-wbs/public/api/whistle-blower/get-assigned-tasks?country_code=" + FilterCountry + "&search=" + DataSearch + "&category=" + FilterCategory + "&periode=" + filterDate, {
       method: 'GET',
       headers: {
         "Content-Type": "Application/json",
@@ -69,10 +153,12 @@ const Card = () => {
     const newData = response.data[0].whistle_blower;
     const onProgressData = response.data[1].whistle_blower;
     const doneData = response.data[2].whistle_blower;
-    // console.log(response)
+    console.log(response)
     const countNew = newData.length
     const countOnProgress = onProgressData.length
     const countDone = doneData.length
+
+    setTotalCategories(countNew + countOnProgress + countDone)
 
     const columnsFromBackend = {
       ['new']: {
@@ -105,9 +191,17 @@ const Card = () => {
     if (localStorage.getItem('user-token') === null) {
       navigate('/login');
     }
+    setTimeout(function () {
+      console.log("Delayed for 5 second.");
+      loadDataCard()
+    }, 800);
+  }, [DataSearch, FilterCategory, FilterCountry, startDate])
+
+  useEffect(() => {
     loadDataInvestigator()
-    loadDataCard()
-    console.log(localStorage.getItem('user-token'))
+    loadDataCategory()
+    loadDataCountry()
+    // console.log(localStorage.getItem('user-token'))
   }, [])
 
 
@@ -140,9 +234,6 @@ const Card = () => {
       } else if (targetMove === 'Done') {
         moveWBS(result.draggableId, 3)
       }
-      // setCodeWBS()
-
-
 
       setColumns({
         ...columns,
@@ -169,8 +260,6 @@ const Card = () => {
       });
     }
   };
-
-
   async function moveWBS(codeWBS, ColumnTarget) {
     let result = await fetch("http://devtest.modena.co.id/api-wbs/public/api/whistle-blower/change-status", {
       method: 'POST',
@@ -186,73 +275,113 @@ const Card = () => {
   }
   // console.log(totalWBS)
   return (
-    <div className="wrapper_card">
-      <Modal
-        open={open}
-        onClose={handleClose}
-      >
-        <Box sx={style}>
-          <div className="top_modal_wrap">
-            {open === true ?
-              dataToPopUp.whistle_blower_category.map((item, index) => (
-                <div className="status_popup title_status_6" key={index}>{item.category}</div>
-              ))
-              : null}
+    <div>
+      <div className='header'>
+        <div className='title_header text'>
+          Whistle Blower Task
+        </div>
+        <div className='title_header count'>{TotalCategories} whistle - {FilterCategory} {FilterCategory === "All" ? "Category":"" }</div>
+      </div>
+      <div className='filter'>
+        <input type={'text'} className="search" placeholder='Search' onChange={(e) => SearchData(e.target.value)} />
+        <div className='wrap_date'>
+          <button onClick={handleClick} className='button_default mr-filter' id='date2' >
+            {format(startDate, "MMMM  yyyy")}
+          </button>
+          {isOpen && (
+            <DatePicker
+              selected={startDate}
+              onChange={choosePeriode}
+              maxDate={addDays(new Date(), 5)}
+              showMonthYearPicker
+              className='select'
+              inline />
+          )}
+        </div>
+        <select className='select' key={'contry_filter'} id={'contry_filter'} onChange={(e) => chooseContry(e.target.value)}>
+          <option key={"All"} value={"All"}>All Country</option>
+          {
+            itemsCountry.map((item, index) => (
+              <option key={item.country_code} value={item.country_code}>{item.country_code.toUpperCase()} - {item.country_name}</option>
+            ))
+          }
+        </select>
+        <select className='select' onChange={(e) => chooseCategory(e.target.value)}>
+          <option key={'All'} value={'All'}> All Category</option>
+          {
+            Categories.map((item, index) => (
+              <option key={item.category}>{item.category}</option>
+            ))
+          }
+        </select>
+      </div>
+      <div className="wrapper_card">
+        <Modal
+          open={open}
+          onClose={handleClose}
+        >
+          <Box sx={style}>
+            <div className="top_modal_wrap">
+              {open === true ?
+                dataToPopUp.whistle_blower_category.map((item, index) => (
+                  <div className="status_popup title_status_6" key={index}>{item.category}</div>
+                ))
+                : null}
 
-            <img src="./asset/close.png" className="close_modal" onClick={handleClose} />
-          </div>
-          <div className="modal_title_date">
-            {dataToPopUp.generate_date}
-          </div>
-          <div className="modal_title_task">
-            {dataToPopUp.report_code}
-          </div>
-          <div className="modal_filter">
-            <div className="modal_filter_wrap">
-              Status Laporan <br />
-              <div className="modal_filter_select">
-                <select key={'status_laporan'}>
-                  <option value={'1'}>New</option>
-                  <option value={'2'}>On Progress</option>
-                  <option value={'3'}>Done</option>
-                </select>
+              <img src="./asset/close.png" className="close_modal" onClick={handleClose} />
+            </div>
+            <div className="modal_title_date">
+              {dataToPopUp.generate_date}
+            </div>
+            <div className="modal_title_task">
+              {dataToPopUp.report_code}
+            </div>
+            <div className="modal_filter">
+              <div className="modal_filter_wrap">
+                Status Laporan <br />
+                <div className="modal_filter_select">
+                  <b>
+                    {dataToPopUp.status_id == '1' ? "New" : ""}
+                    {dataToPopUp.status_id == '2' ? "On Progress" : ""}
+                    {dataToPopUp.status_id == '3' ? "Done" : ""}
+                  </b>
+                </div>
+              </div>
+
+              <div className="modal_filter_wrap ml-1">
+                Status Tindak Lanjut <br />
+                <div className="modal_filter_select">
+                  <select className="ml-s-1" key={'status_tindak_lanjut'}>
+                    <option>Receive</option>
+                    <option>Review</option>
+                    <option>Assign</option>
+                    <option>Report</option>
+                    <option>Finish</option>
+                    <option>Reject</option>
+                  </select>
+                </div>
               </div>
             </div>
 
-            <div className="modal_filter_wrap ml-1">
-              Status Tindak Lanjut <br />
-              <div className="modal_filter_select">
-                <select className="ml-s-1" key={'status_tindak_lanjut'}>
-                  <option>Receive</option>
-                  <option>Review</option>
-                  <option>Assign</option>
-                  <option>Report</option>
-                  <option>Finish</option>
-                  <option>Reject</option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          <div className="modal_form">
-            Investigator<br />
-            <Select
-              options={items}
-              isMulti
-              className='select2'
-              defaultValue={{ label: "Ade Harseno", value: 0 }}
-              styles={{
-                control: (base, state) => ({
-                  ...base,
-                  boxShadow: "none",
-                  "&:focus-within": {
-                    borderColor: "#000",
+            <div className="modal_form">
+              Investigator<br />
+              <Select
+                options={items}
+                isMulti
+                className='select2'
+                defaultValue={dataToPopUp.whistle_blower_investigator}
+                styles={{
+                  control: (base, state) => ({
+                    ...base,
                     boxShadow: "none",
-                  }
-                })
-              }}
-            />
-            {/* <select name='investigator' id="investigator" key="investigator">
+                    "&:focus-within": {
+                      borderColor: "#000",
+                      boxShadow: "none",
+                    }
+                  })
+                }}
+              />
+              {/* <select name='investigator' id="investigator" key="investigator">
 
               {
                 items.map((item, index) => (
@@ -261,119 +390,124 @@ const Card = () => {
               }
             </select><br /> */}
 
-            Description<br />
-            <textarea></textarea>
-            <button>Save</button>
-          </div>
-        </Box>
-      </Modal>
+              Description<br />
+              <textarea></textarea>
+              <button>Save</button>
+            </div>
+          </Box>
+        </Modal>
 
 
-      <div style={{ display: "flex", height: "100%" }}>
-        <DragDropContext onDragEnd={result => onDragEnd(result, columns, setColumns)}>
-          {Object.entries(columns).map(([columnId, column], index) => {
-            return (
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center"
-                }}
-                key={columnId}
-              >
-                <div className="titleWistle" style={{ background: column.backgroundTitle }}>
-                  {column.name} ({column.totalData} Wistle)
+        <div style={{ display: "flex", height: "100%" }}>
+          <DragDropContext onDragEnd={result => onDragEnd(result, columns, setColumns)}>
+            {Object.entries(columns).map(([columnId, column], index) => {
+              return (
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center"
+                  }}
+                  key={columnId}
+                >
+                  <div className="titleWistle" style={{ background: column.backgroundTitle }}>
+                    {column.name} ({column.totalData} Wistle)
+                  </div>
+                  <div className="wrap">
+                    <Droppable droppableId={columnId} key={columnId}>
+                      {(provided, snapshot) => {
+                        return (
+                          <div
+                            {...provided.droppableProps}
+                            ref={provided.innerRef}
+                            className='CardWrap'
+                            style={{
+                              background: column.backgroundBase,
+                              padding: 10,
+                              paddingTop: 70,
+                              width: 250,
+                              minHeight: 0
+                            }}
+                            key={columnId}
+                          >
+                            {column.items.map((item, index) => {
+                              return (
+                                <Draggable
+                                  key={item.report_code}
+                                  draggableId={item.report_code}
+                                  index={index}
+                                >
+
+                                  {(provided, snapshot) => {
+                                    return (
+                                      <div
+                                        ref={provided.innerRef}
+                                        {...provided.draggableProps}
+                                        {...provided.dragHandleProps}
+                                        style={{
+                                          userSelect: "none",
+                                          padding: 16,
+                                          margin: "0 0 8px 0",
+                                          Height: "auto",
+                                          borderRadius: '5px',
+                                          backgroundColor: snapshot.isDragging
+                                            ? "#fff" // affter
+                                            : "#fff", // before;
+                                          color: "#000",
+                                          ...provided.draggableProps.style
+                                        }}
+                                        onClick={() => openPopUpData(item)}
+                                      >
+                                        <img src='/asset/arrow.png' className="arrow_img" style={{ cursor: 'pointer' }} />
+                                        <div className="title_date">
+                                          {item.generate_date}
+                                        </div>
+
+                                        {item.status_id == '1' ? <div className="status title_status_1">Receive</div> : null}
+                                        {item.status_id == '2' ? <div className="status title_status_2">Review</div> : null}
+                                        {item.status_id == '3' ? <div className="status title_status_3">Receive</div> : null}
+                                        {item.status_id == '4' ? <div className="status title_status_4">Assign</div> : null}
+                                        {item.status_id == '5' ? <div className="status title_status_5">Report</div> : null}
+                                        {item.status_id == '6' ? <div className="status title_status_6">Finish</div> : null}
+                                        {item.status_id == '7' ? <div className="status title_status_7">Rejected</div> : null}
+                                        {item.status_id == '8' ? <div className="status title_status_6">Corruption</div> : null}
+
+
+
+                                        <div className="title_task">
+                                          {item.report_code}
+                                          <div className="title_investigator">
+                                          Investigator :
+                                          {
+                                            item.whistle_blower_investigator.map((data, index) => (
+                                              
+                                              <b key={index} > 
+                                                {data.label} {item.whistle_blower_investigator.length-1 == index ? "":"-"}  
+                                              </b>
+                                            ))
+                                          }
+                                        </div>
+                                        </div>
+
+                                        
+
+                                      </div>
+                                    );
+                                  }}
+                                </Draggable>
+                              );
+                            })}
+                            {provided.placeholder}
+                          </div>
+                        );
+                      }}
+                    </Droppable>
+                  </div>
                 </div>
-                <div className="wrap">
-                  <Droppable droppableId={columnId} key={columnId}>
-                    {(provided, snapshot) => {
-                      return (
-                        <div
-                          {...provided.droppableProps}
-                          ref={provided.innerRef}
-                          className='CardWrap'
-                          style={{
-                            background: column.backgroundBase,
-                            padding: 10,
-                            paddingTop: 70,
-                            width: 250,
-                            minHeight: 0
-                          }}
-                          key={columnId}
-                        >
-                          {column.items.map((item, index) => {
-                            return (
-                              <Draggable
-                                key={item.report_code}
-                                draggableId={item.report_code}
-                                index={index}
-                              >
-
-                                {(provided, snapshot) => {
-                                  return (
-                                    <div
-                                      ref={provided.innerRef}
-                                      {...provided.draggableProps}
-                                      {...provided.dragHandleProps}
-                                      style={{
-                                        userSelect: "none",
-                                        padding: 16,
-                                        margin: "0 0 8px 0",
-                                        minHeight: "70px",
-                                        borderRadius: '5px',
-                                        backgroundColor: snapshot.isDragging
-                                          ? "#fff" // affter
-                                          : "#fff", // before;
-                                        color: "#000",
-                                        ...provided.draggableProps.style
-                                      }}
-                                      onClick={() => openPopUpData(item)}
-                                    >
-                                      <img src='/asset/arrow.png' className="arrow_img" style={{ cursor: 'pointer' }} />
-                                      <div className="title_date">
-                                        {item.generate_date}
-                                      </div>
-
-                                      {item.status_id == '1' ? <div className="status title_status_1">Receive</div> : null}
-                                      {item.status_id == '2' ? <div className="status title_status_2">Review</div> : null}
-                                      {item.status_id == '3' ? <div className="status title_status_3">Receive</div> : null}
-                                      {item.status_id == '4' ? <div className="status title_status_4">Assign</div> : null}
-                                      {item.status_id == '5' ? <div className="status title_status_5">Report</div> : null}
-                                      {item.status_id == '6' ? <div className="status title_status_6">Finish</div> : null}
-                                      {item.status_id == '7' ? <div className="status title_status_7">Rejected</div> : null}
-                                      {item.status_id == '8' ? <div className="status title_status_6">Corruption</div> : null}
-
-
-
-                                      <div className="title_task">
-                                        {item.report_code}
-                                      </div>
-
-                                      <div className="title_investigator">
-                                        Investigator :
-                                        {
-                                          item.whistle_blower_investigator.map((item, index) => (
-                                            <b key={index}> {item.investigator_name}</b>
-                                          ))
-                                        }
-                                      </div>
-
-                                    </div>
-                                  );
-                                }}
-                              </Draggable>
-                            );
-                          })}
-                          {provided.placeholder}
-                        </div>
-                      );
-                    }}
-                  </Droppable>
-                </div>
-              </div>
-            );
-          })}
-        </DragDropContext>
+              );
+            })}
+          </DragDropContext>
+        </div>
       </div>
     </div>
   );

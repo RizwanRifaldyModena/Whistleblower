@@ -119,7 +119,7 @@ body{
     margin-top: 10px;
     padding: 3px 5px 3px 5px;
     font-size: 10px;
-    float: left;
+    width:auto ;
     border-radius: 3px;
     b{
         font-weight: normal;
@@ -153,20 +153,23 @@ body{
     font-weight: 600;
 }
 .modal_filter_wrap{
-    width: 40%;
+    width: 20%;
     float: left;
 }
 .modal_filter{
-    width: 85%;
+    width: 100%;
     margin: auto;
+    height: 10px;
     margin-top: 10px;
     font-size: 12px;
+    margin-left: 30px;
     .modal_filter_select{
         width: 100%;
         height: 30px;
         border: 1.4px solid #000;
         border-radius: 4px;
         margin-top: 10px;
+        text-align: center;
         select{
             padding: 5px;
             padding-left: 10px;
@@ -180,30 +183,38 @@ body{
             z-index: 10;
             text-align: center;
         }
+        b{
+            position: relative;
+            font-weight: normal;
+            top: 7px;
+        }
     }
 }
 .select2{
-    width: 99%;
+    width: 645px;
     margin-bottom: 5px;
     outline: none;
 }
 .modal_form{
-    width: 85%;
+    width: 100%;
     margin: auto;
     position: relative;
+    float: left;
     top: 10px;
     font-weight: bold;
     font-size: 12px;
+    margin-left: 30px;
     textarea{
         float: left;
-        width: 91%;
+        width: 620px;
+        height: 90px;
         padding: 11px;
         resize:none;
         outline: none;
     }
     button{
         float: right;
-        margin-right: 6px;
+        margin-right: 53px;
         margin-top: 10px;
         padding: 10px 20px 10px 20px;
         border: none;
@@ -212,4 +223,7 @@ body{
         color: #fff;
         cursor: pointer;
     }
+}
+.mr-filter{
+    margin-right: 160px;
 }

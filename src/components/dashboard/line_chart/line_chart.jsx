@@ -151,7 +151,7 @@ const Line_chart = (props) => {
         setNamePieChartMonth(response.data.label)
     }
 
-    const Linelabels = ["Jan", "Feb", "Maret", "April", "Mei", "Juni", "Juli", "Agust", "Sept", "Nov", "Des"];
+    const Linelabels = ["Jan", "Feb", "Maret", "April", "Mei", "Juni", "Juli", "Agust", "Sept","Okt. ", "Nov", "Des"];
 
     const LineChart = {
         labels: Linelabels,
@@ -339,13 +339,13 @@ const Line_chart = (props) => {
                         <div className='wrap_pie'>
                             <Pie data={PieChart1} options={{ plugins: { legend: { display: false, } } }} />
                         </div>
-                        <div className='color_detail'>
+                        {/* <div className='color_detail'>
                             <ul>
                                 <li><div className='dot c-1'></div>Corruption</li>
                                 <li><div className='dot c-2'></div>Thread</li>
                                 <li><div className='dot c-3'></div>Fraud</li>
                             </ul>
-                        </div>
+                        </div> */}
                     </div>
                     <div className='grid shadow'>
                         <div className='pie_title'>
@@ -355,13 +355,13 @@ const Line_chart = (props) => {
                         <div className='wrap_pie'>
                             <Pie data={PieChart2} options={{ plugins: { legend: { display: false, } } }} />
                         </div>
-                        <div className='color_detail'>
+                        {/* <div className='color_detail'>
                             <ul>
                                 <li><div className='dot c-4'></div>Corruption</li>
                                 <li><div className='dot c-5'></div>Thread</li>
                                 <li><div className='dot c-6'></div>Fraud</li>
                             </ul>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
             </div>

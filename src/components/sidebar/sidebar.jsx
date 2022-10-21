@@ -4,6 +4,7 @@ import '@trendmicro/react-sidenav/dist/react-sidenav.css';
 import './sidebar.scss'
 
 const Sidebar = () => {
+    const username = localStorage.getItem('username');
     return (
         <div>
             <SideNav
@@ -24,7 +25,7 @@ const Sidebar = () => {
                         <NavText>
                             <a href='/'>
                                 <div className='profile_detail'>
-                                    Galuh Sekar
+                                    {username}
                                     <p>Admin</p>
                                 </div>
                              </a> 
