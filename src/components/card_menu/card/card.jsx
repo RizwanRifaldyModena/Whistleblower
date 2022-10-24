@@ -75,14 +75,15 @@ const Card = () => {
     
     const investigatorNames = SelectInvestigator.map(e => e.value).join(';');
 
-    if(DataSubStatus == 1 || DataSubStatus == 2 ){
+    if(DataSubStatus == '1' || DataSubStatus == '2' ){
       setStatusID(1)
-    }else if(DataSubStatus == 3 || DataSubStatus == 4 ){
+    }else if(DataSubStatus == '3' || DataSubStatus == '4' ){
       setStatusID(2)
-    }else if(DataSubStatus == 5 || DataSubStatus == 6 ){
+    }else if(DataSubStatus == '5' || DataSubStatus == '6' ){
       setStatusID(3)
     }
     // exit
+    console.log(StatusID)
     let result = await fetch("http://devtest.modena.co.id/api-wbs/public/api/whistle-blower/update", {
       method: 'POST',
       headers: {
