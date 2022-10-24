@@ -9,7 +9,6 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import format from "date-fns/format";
 import { addDays } from 'date-fns';
-import { da } from 'date-fns/locale';
 
 const style = {
   position: 'absolute',
@@ -49,9 +48,10 @@ const Card = () => {
 
   const [startDate, setStartDate] = useState(new Date());
   const [isOpen, setIsOpen] = useState(false);
-  const [DateMonth, setDateMonth] = useState(new Date());
   const [DataSearch, setSearch] = useState([]);
+  const [AddDescription, setAddDescription] = useState([]);
   const [itemsCountry, setItemsCountry] = useState([]);
+  const [CodeReport, setCodeReport] = useState([]);
   // console.log()
 
   const handleChange = (e) => {
@@ -67,6 +67,31 @@ const Card = () => {
     setSearch(txtSearch)
     loadDataCard()
     // console.log(txtSearch)
+  };
+  async function updateWBS() {
+    // console.log(SelectInvestigator)
+    
+    const investigatorNames = SelectInvestigator.map(e => e.value).join(',');
+    // console.log(investigatorNames)
+    let result = await fetch("http://devtest.modena.co.id/api-wbs/public/api/whistle-blower/update", {
+      method: 'POST',
+      headers: {
+        "Content-Type": "Application/json",
+        "Accept": "Application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify({ 
+        "report_code": CodeReport, 
+        "sub_status_id": DataSubStatus, 
+        "description": AddDescription, 
+        "conclusion": '', 
+        "investigators": investigatorNames, 
+      })
+    })
+    result = await result.json();
+    loadDataCard()
+    handleClose()
+
   };
   const chooseCategory = (search) => {
     // alert(search)
@@ -104,13 +129,14 @@ const Card = () => {
 
   // card DND
   let token = (localStorage.getItem('user-token'));
-  // console.log(token)
   const navigate = useNavigate();
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const [items, setItems] = useState([]);
   const [dataToPopUp, setdataToPopUp] = useState([]);
+  const [DataSubStatus, setDataSubStatus] = useState([]);
+  const [SelectInvestigator, setSelectInvestigator] = useState([]);
 
 
   const loadDataInvestigator = async () => {
@@ -130,11 +156,23 @@ const Card = () => {
     setItems(res.data);
 
   }
+  const changeSubStatus = (subStatus) => {
+    setDataSubStatus(subStatus)
+  };
+
   async function openPopUpData(data) {
-    // console.log(data)
+    // const investigatorNames = data.whistle_blower_investigator.map(e => e.value).join(',');
+    console.log(data.sub_status_id)
+    // setDataSubStatus(data.sub_status_id)
+    setAddDescription(data.description)
+    setCodeReport(data.report_code)
+    setSelectInvestigator(data.whistle_blower_investigator)
+    setDataSubStatus(data.sub_status_id)
+    console.log(DataSubStatus);
     handleOpen();
     setdataToPopUp(data)
   }
+
   const loadDataCard = async () => {
     const filterDate = format(startDate, 'yyyy-MM');
     // alert(filterDate)
@@ -153,7 +191,7 @@ const Card = () => {
     const newData = response.data[0].whistle_blower;
     const onProgressData = response.data[1].whistle_blower;
     const doneData = response.data[2].whistle_blower;
-    console.log(response)
+    // console.log(response)
     const countNew = newData.length
     const countOnProgress = onProgressData.length
     const countDone = doneData.length
@@ -192,7 +230,6 @@ const Card = () => {
       navigate('/login');
     }
     setTimeout(function () {
-      console.log("Delayed for 5 second.");
       loadDataCard()
     }, 800);
   }, [DataSearch, FilterCategory, FilterCountry, startDate])
@@ -201,7 +238,7 @@ const Card = () => {
     loadDataInvestigator()
     loadDataCategory()
     loadDataCountry()
-    // console.log(localStorage.getItem('user-token'))
+    console.log(localStorage.getItem('user-token'))
   }, [])
 
 
@@ -220,10 +257,6 @@ const Card = () => {
       const destItems = [...destColumn.items];
       const [removed] = sourceItems.splice(source.index, 1);
       destItems.splice(destination.index, 0, removed);
-      // openPopUpData(result)
-      // setOpen(true);
-
-      // console.log(result);
       const targetMove = destColumn.name;
 
 
@@ -273,14 +306,14 @@ const Card = () => {
     result = await result.json();
     loadDataCard();
   }
-  // console.log(totalWBS)
+  // console.log(SelectInvestigator)
   return (
     <div>
       <div className='header'>
         <div className='title_header text'>
           Whistle Blower Task
         </div>
-        <div className='title_header count'>{TotalCategories} whistle - {FilterCategory} {FilterCategory === "All" ? "Category":"" }</div>
+        <div className='title_header count'>{TotalCategories} whistle - {FilterCategory} {FilterCategory === "All" ? "Category" : ""}</div>
       </div>
       <div className='filter'>
         <input type={'text'} className="search" placeholder='Search' onChange={(e) => SearchData(e.target.value)} />
@@ -351,13 +384,13 @@ const Card = () => {
               <div className="modal_filter_wrap ml-1">
                 Status Tindak Lanjut <br />
                 <div className="modal_filter_select">
-                  <select className="ml-s-1" key={'status_tindak_lanjut'}>
-                    <option>Receive</option>
-                    <option>Review</option>
-                    <option>Assign</option>
-                    <option>Report</option>
-                    <option>Finish</option>
-                    <option>Reject</option>
+                  <select className="ml-s-1" key={'status_tindak_lanjut'} onChange={(e) => changeSubStatus(e.target.value)} >
+                    {dataToPopUp.sub_status_id == '1' ? <option value='1' selected>Receive</option> : <option value='1' >Receive</option>}
+                    {dataToPopUp.sub_status_id == '2' ? <option value='2' selected>Review</option> : <option value='2' >Review</option>}
+                    {dataToPopUp.sub_status_id == '3' ? <option value='3' selected>Assign</option> : <option value='3' >Assign</option>}
+                    {dataToPopUp.sub_status_id == '4' ? <option value='4' selected>Report</option> : <option value='4' >Report</option>}
+                    {dataToPopUp.sub_status_id == '5' ? <option value='5' selected>Finish</option> : <option value='5' >Finish</option>}
+                    {dataToPopUp.sub_status_id == '6' ? <option value='6' selected>Rejected</option> : <option value='6' >Rejected</option>}
                   </select>
                 </div>
               </div>
@@ -380,19 +413,11 @@ const Card = () => {
                     }
                   })
                 }}
+                onChange={(chioce) => setSelectInvestigator(chioce)}
               />
-              {/* <select name='investigator' id="investigator" key="investigator">
-
-              {
-                items.map((item, index) => (
-                  <option value={item.id} key={item.id}>{item.name}</option>
-                ))
-              }
-            </select><br /> */}
-
               Description<br />
-              <textarea></textarea>
-              <button>Save</button>
+              <textarea onChange={(e) => setAddDescription(e.target.value)}>{AddDescription}</textarea>
+              <button onClick={() => updateWBS()} >Save</button>
             </div>
           </Box>
         </Modal>
@@ -463,33 +488,29 @@ const Card = () => {
                                           {item.generate_date}
                                         </div>
 
-                                        {item.status_id == '1' ? <div className="status title_status_1">Receive</div> : null}
-                                        {item.status_id == '2' ? <div className="status title_status_2">Review</div> : null}
-                                        {item.status_id == '3' ? <div className="status title_status_3">Receive</div> : null}
-                                        {item.status_id == '4' ? <div className="status title_status_4">Assign</div> : null}
-                                        {item.status_id == '5' ? <div className="status title_status_5">Report</div> : null}
-                                        {item.status_id == '6' ? <div className="status title_status_6">Finish</div> : null}
-                                        {item.status_id == '7' ? <div className="status title_status_7">Rejected</div> : null}
-                                        {item.status_id == '8' ? <div className="status title_status_6">Corruption</div> : null}
-
+                                        {item.sub_status_id == '1' ? <div className="status title_status_1">Receive</div> : null}
+                                        {item.sub_status_id == '2' ? <div className="status title_status_2">Review</div> : null}
+                                        {item.sub_status_id == '3' ? <div className="status title_status_4">Assign</div> : null}
+                                        {item.sub_status_id == '4' ? <div className="status title_status_5">Report</div> : null}
+                                        {item.sub_status_id == '5' ? <div className="status title_status_6">Finish</div> : null}
+                                        {item.sub_status_id == '6' ? <div className="status title_status_7">Rejected</div> : null}
 
 
                                         <div className="title_task">
                                           {item.report_code}
-                                          <div className="title_investigator">
-                                          Investigator :
-                                          {
-                                            item.whistle_blower_investigator.map((data, index) => (
-                                              
-                                              <b key={index} > 
-                                                {data.label} {item.whistle_blower_investigator.length-1 == index ? "":"-"}  
-                                              </b>
-                                            ))
-                                          }
-                                        </div>
+                                          <div className='title_inv'>
+                                            <div className="title_investigator">
+                                              Investigator :
+                                              {
+                                                item.whistle_blower_investigator.map((data, index) => (
+                                                  <b key={index} > {data.label}{item.whistle_blower_investigator.length - 1 == index ? "" : ","}  </b>
+                                                ))
+                                              }
+                                            </div>
+                                          </div>
                                         </div>
 
-                                        
+
 
                                       </div>
                                     );
