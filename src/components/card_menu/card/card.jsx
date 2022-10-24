@@ -74,15 +74,12 @@ const Card = () => {
     // console.log(SelectInvestigator)
     
     const investigatorNames = SelectInvestigator.map(e => e.value).join(';');
-    // console.log(investigatorNames)
-    // const status_id = ''
+
     if(DataSubStatus == 1 || DataSubStatus == 2 ){
       setStatusID(1)
-    }
-    if(DataSubStatus == 3 || DataSubStatus == 4 ){
+    }else if(DataSubStatus == 3 || DataSubStatus == 4 ){
       setStatusID(2)
-    }
-    if(DataSubStatus == 5 || DataSubStatus == 6 ){
+    }else if(DataSubStatus == 5 || DataSubStatus == 6 ){
       setStatusID(3)
     }
     // exit

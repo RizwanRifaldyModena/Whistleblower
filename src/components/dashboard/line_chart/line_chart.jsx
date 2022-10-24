@@ -313,8 +313,10 @@ const Line_chart = (props) => {
                 </div>
             </div>
             <div className='wrap_chart'>
-                <div className='wrap_line_chart'>
-                    <Line data={LineChart} options={{ plugins: { legend: { display: false, } } }} />
+                <div className='wrap_grid_line'>
+                    <div className='wrap_line_chart'>
+                        <Line data={LineChart} options={{ plugins: { legend: { display: false, }}}} />
+                    </div>
                 </div>
                 <div className='wrap_piechart'>
                     <div className='grid trans'>
