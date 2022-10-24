@@ -8,9 +8,16 @@ import Confirm_token from "./components/confirm/confirm";
 import Main_card from "./components/main_card";
 import Main_investigator from "./components/main_investigator";
 import Tes from "./components/tes/tes";
+import {Helmet} from 'react-helmet';
+
 function App() {
   return (
     <div>
+      <Helmet>
+			  <meta charSet='utf-8'/>
+			  <title>WBS MODENA</title>
+		  </Helmet>
+
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Main_dashboard />} />  
