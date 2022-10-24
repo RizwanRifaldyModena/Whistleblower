@@ -52,6 +52,8 @@ const Card = () => {
   const [AddDescription, setAddDescription] = useState([]);
   const [itemsCountry, setItemsCountry] = useState([]);
   const [CodeReport, setCodeReport] = useState([]);
+  const [StatusID, setStatusID] = useState([]);
+
   // console.log()
 
   const handleChange = (e) => {
@@ -71,8 +73,19 @@ const Card = () => {
   async function updateWBS() {
     // console.log(SelectInvestigator)
     
-    const investigatorNames = SelectInvestigator.map(e => e.value).join(',');
+    const investigatorNames = SelectInvestigator.map(e => e.value).join(';');
     // console.log(investigatorNames)
+    // const status_id = ''
+    if(DataSubStatus == 1 || DataSubStatus == 2 ){
+      setStatusID(1)
+    }
+    if(DataSubStatus == 3 || DataSubStatus == 4 ){
+      setStatusID(2)
+    }
+    if(DataSubStatus == 5 || DataSubStatus == 6 ){
+      setStatusID(3)
+    }
+    // exit
     let result = await fetch("http://devtest.modena.co.id/api-wbs/public/api/whistle-blower/update", {
       method: 'POST',
       headers: {
@@ -86,6 +99,7 @@ const Card = () => {
         "description": AddDescription, 
         "conclusion": '', 
         "investigators": investigatorNames, 
+        "status_id": StatusID, 
       })
     })
     result = await result.json();
