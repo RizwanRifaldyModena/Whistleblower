@@ -54,8 +54,6 @@ const Card = () => {
   const [CodeReport, setCodeReport] = useState([]);
   const [StatusID, setStatusID] = useState([]);
 
-  // console.log()
-
   const handleChange = (e) => {
     setIsOpen(!isOpen);
     setStartDate(e);
@@ -71,19 +69,9 @@ const Card = () => {
     // console.log(txtSearch)
   };
   async function updateWBS() {
-    // console.log(SelectInvestigator)
     
     const investigatorNames = SelectInvestigator.map(e => e.value).join(';');
 
-    if(DataSubStatus == '1' || DataSubStatus == '2' ){
-      setStatusID(1)
-    }else if(DataSubStatus == '3' || DataSubStatus == '4' ){
-      setStatusID(2)
-    }else if(DataSubStatus == '5' || DataSubStatus == '6' ){
-      setStatusID(3)
-    }
-    // exit
-    console.log(StatusID)
     let result = await fetch("http://devtest.modena.co.id/api-wbs/public/api/whistle-blower/update", {
       method: 'POST',
       headers: {
@@ -147,7 +135,9 @@ const Card = () => {
   const handleClose = () => setOpen(false);
   const [items, setItems] = useState([]);
   const [dataToPopUp, setdataToPopUp] = useState([]);
+  const [dataDrag, setdataDrag] = useState([]);
   const [DataSubStatus, setDataSubStatus] = useState([]);
+  const [DataStatus, setDataStatus] = useState([]);
   const [SelectInvestigator, setSelectInvestigator] = useState([]);
 
 
@@ -169,18 +159,27 @@ const Card = () => {
 
   }
   const changeSubStatus = (subStatus) => {
+    if(subStatus == 1){
+      setStatusID('1')
+      setDataStatus('New')
+    }else if(subStatus == 3 || subStatus == 4 || subStatus == 2){
+      setStatusID('2')
+      setDataStatus('On Progress')
+    }else if(subStatus == 5 || subStatus == 6){
+      setStatusID('3')
+      setDataStatus('Done')
+    }
     setDataSubStatus(subStatus)
   };
 
   async function openPopUpData(data) {
-    // const investigatorNames = data.whistle_blower_investigator.map(e => e.value).join(',');
-    console.log(data.sub_status_id)
-    // setDataSubStatus(data.sub_status_id)
+
     setAddDescription(data.description)
     setCodeReport(data.report_code)
     setSelectInvestigator(data.whistle_blower_investigator)
     setDataSubStatus(data.sub_status_id)
-    console.log(DataSubStatus);
+    setStatusID(data.status_id)
+    // console.log(data);
     handleOpen();
     setdataToPopUp(data)
   }
@@ -244,7 +243,9 @@ const Card = () => {
     setTimeout(function () {
       loadDataCard()
     }, 800);
-  }, [DataSearch, FilterCategory, FilterCountry, startDate])
+    // setStatusID('1')
+
+  }, [DataSearch, FilterCategory, FilterCountry, startDate,StatusID, dataToPopUp])
 
   useEffect(() => {
     loadDataInvestigator()
@@ -256,8 +257,34 @@ const Card = () => {
 
 
   const [columns, setColumns] = useState([]);
+  
+  const getCardById = async (idCard) => {
+    // alert(idCard)
+
+    const response = await fetch("http://devtest.modena.co.id/api-wbs/public/api/whistle-blower/get-assigned-tasks/" + idCard , {
+      method: 'GET',
+      headers: {
+        "Content-Type": "Application/json",
+        "Accept": "Application/json",
+        "Authorization": `Bearer ${token}`
+      }
+    }).then((response) => response.json())
+    // console.log(response)
+    setAddDescription(response.description)
+    setCodeReport(response.report_code)
+    setSelectInvestigator(response.whistle_blower_investigator)
+    setDataSubStatus(response.sub_status_id)
+    setStatusID(response.status_id)
+    setdataToPopUp(response.data)
+    console.log(dataToPopUp);
+
+    handleOpen();
+
+  }
   const onDragEnd = (result, columns, setColumns) => {
 
+    getCardById(result.draggableId)
+    // console.log(dataToPopUp)
 
     if (!result.destination) return;
     const { source, destination } = result;
@@ -271,7 +298,6 @@ const Card = () => {
       destItems.splice(destination.index, 0, removed);
       const targetMove = destColumn.name;
 
-
       if (targetMove === 'New') {
         moveWBS(result.draggableId, 1)
       } else if (targetMove === 'On Progress') {
@@ -279,7 +305,8 @@ const Card = () => {
       } else if (targetMove === 'Done') {
         moveWBS(result.draggableId, 3)
       }
-
+      // handleOpen()
+      // openPopUpData(dataToPopUp)
       setColumns({
         ...columns,
         [source.droppableId]: {
@@ -385,11 +412,14 @@ const Card = () => {
               <div className="modal_filter_wrap">
                 Status Laporan <br />
                 <div className="modal_filter_select">
-                  <b>
-                    {dataToPopUp.status_id == '1' ? "New" : ""}
-                    {dataToPopUp.status_id == '2' ? "On Progress" : ""}
-                    {dataToPopUp.status_id == '3' ? "Done" : ""}
-                  </b>
+                  
+                    {DataStatus == false ? 
+                    <b>
+                      {dataToPopUp.status_id == '1' ? "New" : ""}
+                      {dataToPopUp.status_id == '2' ? "On Progress" : ""}
+                      {dataToPopUp.status_id == '3' ? "Done" : ""}
+                    </b>
+                     : <b>{DataStatus}</b>}
                 </div>
               </div>
 
