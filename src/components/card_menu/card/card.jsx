@@ -69,7 +69,7 @@ const Card = () => {
     // console.log(txtSearch)
   };
   async function updateWBS() {
-    
+
     const investigatorNames = SelectInvestigator.map(e => e.value).join(';');
     // console.log(SelectInvestigator)
     let result = await fetch("http://devtest.modena.co.id/api-wbs/public/api/whistle-blower/update", {
@@ -79,13 +79,13 @@ const Card = () => {
         "Accept": "Application/json",
         "Authorization": `Bearer ${token}`
       },
-      body: JSON.stringify({ 
-        "report_code": CodeReport, 
-        "sub_status_id": DataSubStatus, 
-        "description": AddDescription, 
-        "conclusion": '', 
-        "investigators": investigatorNames, 
-        "status_id": StatusID, 
+      body: JSON.stringify({
+        "report_code": CodeReport,
+        "sub_status_id": DataSubStatus,
+        "description": AddDescription,
+        "conclusion": '',
+        "investigators": investigatorNames,
+        "status_id": StatusID,
       })
     })
     result = await result.json();
@@ -139,6 +139,7 @@ const Card = () => {
   const [DataSubStatus, setDataSubStatus] = useState([]);
   const [DataStatus, setDataStatus] = useState([]);
   const [SelectInvestigator, setSelectInvestigator] = useState([]);
+  const [SubStatusPopup, setSubStatusPopup] = useState([]);
 
 
   const loadDataInvestigator = async () => {
@@ -159,13 +160,13 @@ const Card = () => {
 
   }
   const changeSubStatus = (subStatus) => {
-    if(subStatus == 1){
+    if (subStatus == 1) {
       setStatusID('1')
       setDataStatus('New')
-    }else if(subStatus == 3 || subStatus == 4 || subStatus == 2){
+    } else if (subStatus == 3 || subStatus == 4 || subStatus == 2) {
       setStatusID('2')
       setDataStatus('On Progress')
-    }else if(subStatus == 5 || subStatus == 6){
+    } else if (subStatus == 5 || subStatus == 6) {
       setStatusID('3')
       setDataStatus('Done')
     }
@@ -179,6 +180,7 @@ const Card = () => {
     setSelectInvestigator(data.whistle_blower_investigator)
     setDataSubStatus(data.sub_status_id)
     setStatusID(data.status_id)
+    setSubStatusPopup(data.sub_status_id)
     // console.log(data);
     handleOpen();
     setdataToPopUp(data)
@@ -245,7 +247,7 @@ const Card = () => {
     }, 800);
     // setStatusID('1')
 
-  }, [DataSearch, FilterCategory, FilterCountry, startDate,StatusID, dataToPopUp])
+  }, [DataSearch, FilterCategory, FilterCountry, startDate, StatusID, dataToPopUp, DataSubStatus])
 
   useEffect(() => {
     loadDataInvestigator()
@@ -257,11 +259,11 @@ const Card = () => {
 
 
   const [columns, setColumns] = useState([]);
-  
+
   const getCardById = async (idCard) => {
     // alert(idCard)
 
-    const response = await fetch("http://devtest.modena.co.id/api-wbs/public/api/whistle-blower/get-assigned-tasks/" + idCard , {
+    const response = await fetch("http://devtest.modena.co.id/api-wbs/public/api/whistle-blower/get-assigned-tasks/" + idCard, {
       method: 'GET',
       headers: {
         "Content-Type": "Application/json",
@@ -296,16 +298,22 @@ const Card = () => {
       const [removed] = sourceItems.splice(source.index, 1);
       destItems.splice(destination.index, 0, removed);
       const targetMove = destColumn.name;
-
+      console.log(targetMove)
       if (targetMove === 'New') {
-        moveWBS(result.draggableId, 1)
+        moveWBS(result.draggableId, 1, 1)
         setStatusID(1)
+        setSubStatusPopup(1)
+        // console.log(destColumn)
       } else if (targetMove === 'On Progress') {
-        moveWBS(result.draggableId, 2)
+        moveWBS(result.draggableId, 2, 2)
         setStatusID(2)
+        setSubStatusPopup(2)
+        // console.log(destColumn)
       } else if (targetMove === 'Done') {
-        moveWBS(result.draggableId, 3)
+        moveWBS(result.draggableId, 3, 5)
         setStatusID(3)
+        setSubStatusPopup(5)
+        // console.log(destColumn)
       }
       // handleOpen()
       // openPopUpData(dataToPopUp)
@@ -335,7 +343,7 @@ const Card = () => {
     }
     getCardById(result.draggableId)
   };
-  async function moveWBS(codeWBS, ColumnTarget) {
+  async function moveWBS(codeWBS, ColumnTarget, subStatus) {
     let result = await fetch("http://devtest.modena.co.id/api-wbs/public/api/whistle-blower/change-status", {
       method: 'POST',
       headers: {
@@ -343,12 +351,12 @@ const Card = () => {
         "Accept": "Application/json",
         "Authorization": `Bearer ${token}`
       },
-      body: JSON.stringify({ "report_code": codeWBS, "status": ColumnTarget })
+      body: JSON.stringify({ "report_code": codeWBS, "status_id": ColumnTarget, "sub_status_id": subStatus })
     })
     result = await result.json();
     loadDataCard();
   }
-  // console.log(SelectInvestigator)
+  // console.log(DataSubStatus)
   return (
     <div>
       <div className='header'>
@@ -406,7 +414,7 @@ const Card = () => {
               <img src="./asset/close.png" className="close_modal" onClick={handleClose} />
             </div>
             <div className="modal_title_date">
-              {dataToPopUp.generate_date}
+              {dataToPopUp.generate_date} {DataSubStatus}
             </div>
             <div className="modal_title_task">
               {dataToPopUp.report_code}
@@ -415,28 +423,30 @@ const Card = () => {
               <div className="modal_filter_wrap">
                 Status Laporan <br />
                 <div className="modal_filter_select">
-                  
-                    {DataStatus == false ? 
+
+                  {DataStatus == false ?
                     <b>
                       {StatusID == '1' ? "New" : ""}
                       {StatusID == '2' ? "On Progress" : ""}
                       {StatusID == '3' ? "Done" : ""}
                     </b>
-                     : <b>{DataStatus}</b>}
+                    : <b>{DataStatus}</b>}
                 </div>
               </div>
 
               <div className="modal_filter_wrap ml-1">
-                Status Tindak Lanjut <br />
+                Status Tindak Lanjut  {SubStatusPopup}<br />
                 <div className="modal_filter_select">
-                  <select className="ml-s-1" key={'status_tindak_lanjut'} onChange={(e) => changeSubStatus(e.target.value)} >
-                    {dataToPopUp.sub_status_id == '1' ? <option value='1' selected>Receive</option> : <option value='1' >Receive</option>}
-                    {dataToPopUp.sub_status_id == '2' ? <option value='2' selected>Review</option> : <option value='2' >Review</option>}
-                    {dataToPopUp.sub_status_id == '3' ? <option value='3' selected>Assign</option> : <option value='3' >Assign</option>}
-                    {dataToPopUp.sub_status_id == '4' ? <option value='4' selected>Report</option> : <option value='4' >Report</option>}
-                    {dataToPopUp.sub_status_id == '5' ? <option value='5' selected>Finish</option> : <option value='5' >Finish</option>}
-                    {dataToPopUp.sub_status_id == '6' ? <option value='6' selected>Rejected</option> : <option value='6' >Rejected</option>}
-                  </select>
+                  {/* {SubStatusPopup == true ? */}
+                    <select className="ml-s-1" key={'status_tindak_lanjut'} onChange={(e) => changeSubStatus(e.target.value)} >
+                      {SubStatusPopup == '1' ? <option value='1' selected>Receive</option> : <option value='1' >Receive</option>}
+                      {SubStatusPopup == '2' ? <option value='2' selected>Review</option> : <option value='2' >Review</option>}
+                      {SubStatusPopup == '3' ? <option value='3' selected>Assign</option> : <option value='3' >Assign</option>}
+                      {SubStatusPopup == '4' ? <option value='4' selected>Report</option> : <option value='4' >Report</option>}
+                      {SubStatusPopup == '5' ? <option value='5' selected>Finish</option> : <option value='5' >Finish</option>}
+                      {SubStatusPopup == '6' ? <option value='6' selected>Rejected</option> : <option value='6' >Rejected</option>}
+                    </select>
+                  {/* } */}
                 </div>
               </div>
             </div>

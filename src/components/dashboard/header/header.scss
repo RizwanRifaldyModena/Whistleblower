@@ -21,9 +21,11 @@
     margin-top: 10px;
 }
 .filter_dashboard{
-    width: 80%;
+    width: 100%;
     margin: auto;
-    margin-top: 40px;
+    // margin-top: 40px;
+    margin-right: 30px;
+    float: right;
 }
 .filter_dashboard_grid{
     float: right;

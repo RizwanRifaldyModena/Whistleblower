@@ -75,10 +75,10 @@ const Line_chart = (props) => {
 
     let token = (localStorage.getItem('user-token'));
     const loadCountData = async () => {
-        
+
         const start = (format(startDate, 'yyyy'))
         // const end = (format(endDate, 'yyyy-MM'))
-        
+
         const response = await fetch("http://devtest.modena.co.id/api-wbs/public/api/dashboard/count-by-status", {
             method: 'GET',
             headers: {
@@ -99,7 +99,7 @@ const Line_chart = (props) => {
     const loadLineChartData = async () => {
         const start = (format(startDate, 'yyyy'))
         // const end = (format(endDate, 'yyyy-MM'))
-        const response = await fetch("http://devtest.modena.co.id/api-wbs/public/api/dashboard/line-chart?year="+start+"&country_code="+filterCountry, {
+        const response = await fetch("http://devtest.modena.co.id/api-wbs/public/api/dashboard/line-chart?year=" + start + "&country_code=" + filterCountry, {
             method: 'GET',
             headers: {
                 "Content-Type": "Application/json",
@@ -151,7 +151,7 @@ const Line_chart = (props) => {
         setNamePieChartMonth(response.data.label)
     }
 
-    const Linelabels = ["Jan", "Feb", "Maret", "April", "Mei", "Juni", "Juli", "Agust", "Sept","Okt. ", "Nov", "Des"];
+    const Linelabels = ["Jan", "Feb", "Maret", "April", "Mei", "Juni", "Juli", "Agust", "Sept", "Okt. ", "Nov", "Des"];
 
     const LineChart = {
         labels: Linelabels,
@@ -248,7 +248,7 @@ const Line_chart = (props) => {
         loadPieChartDataYear();
         loadPieChartDataMonth();
         loadDataCountry()
-    }, [startDate,filterCountry])
+    }, [startDate, filterCountry])
 
     // console.log(format(startDate, 'MM-yyyy'))
 
@@ -258,66 +258,9 @@ const Line_chart = (props) => {
                 <div className='title_header text'>
                     Whistleblower
                 </div>
-
-                <div className='filter_dashboard'>
-                    <div className='filter_dashboard_grid'>
-                        <select className='select' key={'contry_filter'} id={'contry_filter'}  value={changeCountry} onChange={changeCountry}>
-                            <option key={0} value={""}>Choose country</option>
-                            {
-                                itemsCountry.map((item, index) => (
-                                    <option key={item.country_code} value={item.country_code}>{item.country_code.toUpperCase()} - {item.country_name}</option>
-                                ))
-                            }
-                        </select>
-                    </div>
-
-                    <div className='filter_dashboard_grid'>
-                        <p>Periode</p>
-                        <button onClick={handleClick2} className='button_default' id='date1'>
-                            {format(startDate, "yyyy")}
-                        </button>
-                        {isOpen2 && (
-                            <DatePicker
-                                selected={startDate}
-                                onChange={handleChange2}
-                                maxDate={addDays(new Date(), 5)}
-                                showYearPicker
-                                showFullYearPicker
-                                showTwoColumnYearPicker
-                                inline />
-                        )}
-                    </div>
-{/* 
-                    <div className='filter_dashboard_grid' style={{ paddingTop: '10px' }}>
-                        -
-                    </div>
-
-                    <div className='filter_dashboard_grid'>
-                        <p>From</p>
-                        
-                        
-                        <button onClick={handleClick} className='button_default' id='date2'>
-                            {format(startDate, "yyyy")}
-                        </button>
-                        {isOpen && (
-                            <DatePicker
-                                selected={startDate}
-                                onChange={handleChange}
-                                maxDate={addDays(new Date(), 5)}
-                                showMonthYearPicker
-                                showFullMonthYearPicker
-                                showTwoColumnMonthYearPicker
-                                inline />
-                        )}
-                    </div> */}
-                </div>
             </div>
             <div className='wrap_chart'>
-                <div className='wrap_grid_line'>
-                    <div className='wrap_line_chart'>
-                        <Line data={LineChart} options={{ plugins: { legend: { display: false, }}}} />
-                    </div>
-                </div>
+
                 <div className='wrap_piechart'>
                     <div className='grid trans'>
                         <div className='card shadow'>
@@ -365,6 +308,62 @@ const Line_chart = (props) => {
                             </ul>
                         </div> */}
                     </div>
+                </div>
+
+                <div className='filter_dashboard'>
+                    <div className='filter_dashboard_grid'>
+                        <select className='select' key={'contry_filter'} id={'contry_filter'} value={changeCountry} onChange={changeCountry}>
+                            <option key={0} value={""}>Choose country</option>
+                            {
+                                itemsCountry.map((item, index) => (
+                                    <option key={item.country_code} value={item.country_code}>{item.country_code.toUpperCase()} - {item.country_name}</option>
+                                ))
+                            }
+                        </select>
+                    </div>
+
+                    <div className='filter_dashboard_grid'>
+                        <p>Periode</p>
+                        <button onClick={handleClick2} className='button_default' id='date1'>
+                            {format(startDate, "yyyy")}
+                        </button>
+                        {isOpen2 && (
+                            <DatePicker
+                                selected={startDate}
+                                onChange={handleChange2}
+                                maxDate={addDays(new Date(), 5)}
+                                showYearPicker
+                                showFullYearPicker
+                                showTwoColumnYearPicker
+                                inline />
+                        )}
+                    </div>
+                    {/* 
+                    <div className='filter_dashboard_grid' style={{ paddingTop: '10px' }}>
+                        -
+                    </div>
+
+                    <div className='filter_dashboard_grid'>
+                        <p>From</p>
+                        
+                        
+                        <button onClick={handleClick} className='button_default' id='date2'>
+                            {format(startDate, "yyyy")}
+                        </button>
+                        {isOpen && (
+                            <DatePicker
+                                selected={startDate}
+                                onChange={handleChange}
+                                maxDate={addDays(new Date(), 5)}
+                                showMonthYearPicker
+                                showFullMonthYearPicker
+                                showTwoColumnMonthYearPicker
+                                inline />
+                        )}
+                    </div> */}
+                </div>
+                <div className='wrap_line_chart'>
+                    <Line data={LineChart} options={{ plugins: { legend: { display: false, } } }} />
                 </div>
             </div>
         </div>
