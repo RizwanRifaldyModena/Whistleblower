@@ -71,7 +71,7 @@ const Card = () => {
   async function updateWBS() {
     
     const investigatorNames = SelectInvestigator.map(e => e.value).join(';');
-
+    // console.log(SelectInvestigator)
     let result = await fetch("http://devtest.modena.co.id/api-wbs/public/api/whistle-blower/update", {
       method: 'POST',
       headers: {
@@ -272,11 +272,11 @@ const Card = () => {
     // console.log(response)
     setAddDescription(response.description)
     setCodeReport(response.report_code)
-    setSelectInvestigator(response.whistle_blower_investigator)
+    setSelectInvestigator(response.data.whistle_blower_investigator)
     setDataSubStatus(response.sub_status_id)
     setStatusID(response.status_id)
     setdataToPopUp(response.data)
-    console.log(dataToPopUp);
+    console.log(response.data.whistle_blower_investigator);
 
     handleOpen();
 
