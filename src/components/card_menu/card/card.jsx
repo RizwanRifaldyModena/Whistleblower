@@ -274,16 +274,15 @@ const Card = () => {
     setCodeReport(response.data.report_code)
     setSelectInvestigator(response.data.whistle_blower_investigator)
     setDataSubStatus(response.data.sub_status_id)
-    setStatusID(response.data.status_id)
     setdataToPopUp(response.data)
-    console.log(response.data.whistle_blower_investigator);
+    // console.log(response.data.whistle_blower_investigator);
+    // console.log(StatusID)
 
     handleOpen();
 
   }
   const onDragEnd = (result, columns, setColumns) => {
 
-    getCardById(result.draggableId)
     // console.log(dataToPopUp)
 
     if (!result.destination) return;
@@ -300,10 +299,13 @@ const Card = () => {
 
       if (targetMove === 'New') {
         moveWBS(result.draggableId, 1)
+        setStatusID(1)
       } else if (targetMove === 'On Progress') {
         moveWBS(result.draggableId, 2)
+        setStatusID(2)
       } else if (targetMove === 'Done') {
         moveWBS(result.draggableId, 3)
+        setStatusID(3)
       }
       // handleOpen()
       // openPopUpData(dataToPopUp)
@@ -331,6 +333,7 @@ const Card = () => {
         }
       });
     }
+    getCardById(result.draggableId)
   };
   async function moveWBS(codeWBS, ColumnTarget) {
     let result = await fetch("http://devtest.modena.co.id/api-wbs/public/api/whistle-blower/change-status", {
@@ -415,9 +418,9 @@ const Card = () => {
                   
                     {DataStatus == false ? 
                     <b>
-                      {dataToPopUp.status_id == '1' ? "New" : ""}
-                      {dataToPopUp.status_id == '2' ? "On Progress" : ""}
-                      {dataToPopUp.status_id == '3' ? "Done" : ""}
+                      {StatusID == '1' ? "New" : ""}
+                      {StatusID == '2' ? "On Progress" : ""}
+                      {StatusID == '3' ? "Done" : ""}
                     </b>
                      : <b>{DataStatus}</b>}
                 </div>
