@@ -270,11 +270,11 @@ const Card = () => {
       }
     }).then((response) => response.json())
     // console.log(response)
-    setAddDescription(response.description)
-    setCodeReport(response.report_code)
+    setAddDescription(response.data.description)
+    setCodeReport(response.data.report_code)
     setSelectInvestigator(response.data.whistle_blower_investigator)
-    setDataSubStatus(response.sub_status_id)
-    setStatusID(response.status_id)
+    setDataSubStatus(response.data.sub_status_id)
+    setStatusID(response.data.status_id)
     setdataToPopUp(response.data)
     console.log(response.data.whistle_blower_investigator);
 
