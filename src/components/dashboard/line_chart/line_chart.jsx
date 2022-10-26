@@ -310,7 +310,7 @@ const Line_chart = (props) => {
                     </div>
                 </div>
                 <div className='wrap_line_chart'>
-                    <div className='filter_dashboard'>
+                    <div className='filter_dashboard_chart'>
                         <div className='filter_dashboard_grid'>
                             <select className='select' key={'contry_filter'} id={'contry_filter'} value={changeCountry} onChange={changeCountry}>
                                 <option key={0} value={""}>Choose country</option>

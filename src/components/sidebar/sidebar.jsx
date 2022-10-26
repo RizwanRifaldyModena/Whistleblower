@@ -16,7 +16,7 @@ const Sidebar = () => {
                 
                 <SideNav.Nav defaultSelected="home">
                     
-                    <NavItem eventKey="home">
+                    <NavItem eventKey="home" href='/'>
                         <NavIcon>
                             <a href='/'>
                                 <img src="/asset/profile.png" width='30px' style={{ marginTop: '10px' }} />
