@@ -13,14 +13,23 @@ const Line_chart = (props) => {
     // Header Section
     // console.log(startDate)
     const [itemsCountry, setItemsCountry] = useState([]);
-    const handleChange = (e) => {
-        setStartDate(e);
-        setIsOpen(!isOpen);
+    const [startDate, setStartDate] = useState(new Date('2022'));
+    const [ThisYear, setThisYear] = useState(new Date('2022'));
+    const [PieFilterMonth, setPieFilterMonth] = useState(new Date());
+    const [PieFilterYear, setPieFilterYear] = useState(new Date());
+
+    const handleChangeMonth = (e) => {
+        setIsOpenMonthPie(!isOpenMonthPie);
+        setPieFilterMonth(e);
+        loadPieChartDataMonth();
     };
-    const handleClick = (e) => {
-        e.preventDefault();
-        setIsOpen(!isOpen);
+    const handleChangeYear = (e) => {
+        setIsOpenYearPie(!isOpenYearPie);
+        setPieFilterYear(e);
+        // alert(e)
+        loadPieChartDataYear();
     };
+
     const handleChange2 = (e) => {
         setIsOpen2(!isOpen2);
         setStartDate(e);
@@ -33,12 +42,24 @@ const Line_chart = (props) => {
     };
 
 
-    const [startDate, setStartDate] = useState(new Date('2022'));
+    const handleClickYearPie = (e) => {
+        e.preventDefault();
+        setIsOpenYearPie(!isOpenYearPie);
+    };
+
+    const handleClickMonthPie = (e) => {
+        e.preventDefault();
+        setIsOpenMonthPie(!isOpenMonthPie);
+    };
+
+
     // const [endDate, setEndDate] = useState(new Date());
     const [filterCountry, setFilterCountry] = useState([]);
 
     const [isOpen, setIsOpen] = useState(false);
     const [isOpen2, setIsOpen2] = useState(false);
+    const [isOpenYearPie, setIsOpenYearPie] = useState(false);
+    const [isOpenMonthPie, setIsOpenMonthPie] = useState(false);
     function changeCountry(event) {
         setFilterCountry(event.target.value);
         loadLineChartData();
@@ -116,8 +137,8 @@ const Line_chart = (props) => {
 
 
     const loadPieChartDataYear = async () => {
-
-        const response = await fetch("http://devtest.modena.co.id/api-wbs/public/api/dashboard/pie-chart?periode_type=year", {
+        const year = (format(PieFilterYear, 'yyyy'))
+        const response = await fetch("http://devtest.modena.co.id/api-wbs/public/api/dashboard/pie-chart?periode_type=year&year="+year, {
             method: 'GET',
             headers: {
                 "Content-Type": "Application/json",
@@ -134,8 +155,9 @@ const Line_chart = (props) => {
     }
 
     const loadPieChartDataMonth = async () => {
-
-        const response = await fetch("http://devtest.modena.co.id/api-wbs/public/api/dashboard/pie-chart?periode_type=Month", {
+        const start = (format(PieFilterMonth, 'MM'))
+        const year = (format(ThisYear, 'yyyy'))
+        const response = await fetch("http://devtest.modena.co.id/api-wbs/public/api/dashboard/pie-chart?periode_type=month&month="+start+"&year="+year, {
             method: 'GET',
             headers: {
                 "Content-Type": "Application/json",
@@ -143,7 +165,7 @@ const Line_chart = (props) => {
                 "Authorization": `Bearer ${token}`
             }
         }).then((response) => response.json())
-        // console.log(response.data.label);
+        // console.log(start);
         if (response.error === 'Unauthenticated.') {
             navigate('/login');
         }
@@ -166,7 +188,7 @@ const Line_chart = (props) => {
         ]
     };
 
-    const PieChart1 = {
+    const PieChart2 = {
         labels: NamePieChartYear,
         datasets: [
             {
@@ -202,7 +224,7 @@ const Line_chart = (props) => {
     };
 
 
-    const PieChart2 = {
+    const PieChart1 = {
         labels: NamePieChartMonth,
         datasets: [
             {
@@ -248,7 +270,7 @@ const Line_chart = (props) => {
         loadPieChartDataYear();
         loadPieChartDataMonth();
         loadDataCountry()
-    }, [startDate, filterCountry])
+    }, [startDate, filterCountry,PieFilterMonth,PieFilterYear])
 
     // console.log(format(startDate, 'MM-yyyy'))
 
@@ -278,8 +300,17 @@ const Line_chart = (props) => {
                     </div>
                     <div className='grid shadow'>
                         <div className='pie_title'>
-                            January
-                            {/* <img src='/asset/horizontal.png' className='p-i' /> */}
+                            {format(PieFilterMonth, 'MMMM')}
+                            <img src='/asset/button.png' className='p-i' onClick={handleClickMonthPie} width={'35px'} />
+                            {isOpenMonthPie && (
+                                <DatePicker
+                                    selected={startDate}
+                                    onChange={handleChangeMonth}
+                                    maxDate={addDays(new Date(), 5)}
+                                    dateFormat="MM/yyyy"
+                                    showMonthYearPicker
+                                    inline />
+                            )}
                         </div>
                         <div className='wrap_pie'>
                             <Pie data={PieChart1} options={{ plugins: { legend: { display: false, } } }} />
@@ -294,8 +325,20 @@ const Line_chart = (props) => {
                     </div>
                     <div className='grid shadow'>
                         <div className='pie_title'>
-                            2022
-                            {/* <img src='/asset/horizontal.png' className='p-i' /> */}
+                            {format(PieFilterYear, 'yyyy')}
+
+                            <img src='/asset/button.png' className='p-i' onClick={handleClickYearPie} width={'35px'} />
+
+                            {isOpenYearPie && (
+                                <DatePicker
+                                    selected={startDate}
+                                    onChange={handleChangeYear}
+                                    maxDate={addDays(new Date(), 5)}
+                                    showYearPicker
+                                    showFullYearPicker
+                                    showTwoColumnYearPicker
+                                    inline />
+                            )}
                         </div>
                         <div className='wrap_pie'>
                             <Pie data={PieChart2} options={{ plugins: { legend: { display: false, } } }} />
