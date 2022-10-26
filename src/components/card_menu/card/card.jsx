@@ -435,7 +435,7 @@ const Card = () => {
               </div>
 
               <div className="modal_filter_wrap ml-1">
-                Status Tindak Lanjut  {SubStatusPopup}<br />
+                Status Tindak Lanjut  <br />
                 <div className="modal_filter_select">
                   {/* {SubStatusPopup == true ? */}
                     <select className="ml-s-1" key={'status_tindak_lanjut'} onChange={(e) => changeSubStatus(e.target.value)} >
