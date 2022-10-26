@@ -309,60 +309,36 @@ const Line_chart = (props) => {
                         </div> */}
                     </div>
                 </div>
-
-                <div className='filter_dashboard'>
-                    <div className='filter_dashboard_grid'>
-                        <select className='select' key={'contry_filter'} id={'contry_filter'} value={changeCountry} onChange={changeCountry}>
-                            <option key={0} value={""}>Choose country</option>
-                            {
-                                itemsCountry.map((item, index) => (
-                                    <option key={item.country_code} value={item.country_code}>{item.country_code.toUpperCase()} - {item.country_name}</option>
-                                ))
-                            }
-                        </select>
-                    </div>
-
-                    <div className='filter_dashboard_grid'>
-                        <p>Periode</p>
-                        <button onClick={handleClick2} className='button_default' id='date1'>
-                            {format(startDate, "yyyy")}
-                        </button>
-                        {isOpen2 && (
-                            <DatePicker
-                                selected={startDate}
-                                onChange={handleChange2}
-                                maxDate={addDays(new Date(), 5)}
-                                showYearPicker
-                                showFullYearPicker
-                                showTwoColumnYearPicker
-                                inline />
-                        )}
-                    </div>
-                    {/* 
-                    <div className='filter_dashboard_grid' style={{ paddingTop: '10px' }}>
-                        -
-                    </div>
-
-                    <div className='filter_dashboard_grid'>
-                        <p>From</p>
-                        
-                        
-                        <button onClick={handleClick} className='button_default' id='date2'>
-                            {format(startDate, "yyyy")}
-                        </button>
-                        {isOpen && (
-                            <DatePicker
-                                selected={startDate}
-                                onChange={handleChange}
-                                maxDate={addDays(new Date(), 5)}
-                                showMonthYearPicker
-                                showFullMonthYearPicker
-                                showTwoColumnMonthYearPicker
-                                inline />
-                        )}
-                    </div> */}
-                </div>
                 <div className='wrap_line_chart'>
+                    <div className='filter_dashboard'>
+                        <div className='filter_dashboard_grid'>
+                            <select className='select' key={'contry_filter'} id={'contry_filter'} value={changeCountry} onChange={changeCountry}>
+                                <option key={0} value={""}>Choose country</option>
+                                {
+                                    itemsCountry.map((item, index) => (
+                                        <option key={item.country_code} value={item.country_code}>{item.country_code.toUpperCase()} - {item.country_name}</option>
+                                    ))
+                                }
+                            </select>
+                        </div>
+
+                        <div className='filter_dashboard_grid'>
+                            <p>Periode</p>
+                            <button onClick={handleClick2} className='button_default' id='date1'>
+                                {format(startDate, "yyyy")}
+                            </button>
+                            {isOpen2 && (
+                                <DatePicker
+                                    selected={startDate}
+                                    onChange={handleChange2}
+                                    maxDate={addDays(new Date(), 5)}
+                                    showYearPicker
+                                    showFullYearPicker
+                                    showTwoColumnYearPicker
+                                    inline />
+                            )}
+                        </div>
+                    </div>
                     <Line data={LineChart} options={{ plugins: { legend: { display: false, } } }} />
                 </div>
             </div>
