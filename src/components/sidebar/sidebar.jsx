@@ -2,21 +2,22 @@ import React from 'react'
 import SideNav, { NavItem, NavIcon, NavText } from '@trendmicro/react-sidenav';
 import '@trendmicro/react-sidenav/dist/react-sidenav.css';
 import './sidebar.scss'
+import { useNavigate } from 'react-router-dom';
 
 const Sidebar = () => {
     const username = localStorage.getItem('username');
+    const navigate = useNavigate();
+    async function moveLink1() {navigate('/');};
+    async function moveLink2() {navigate('/card_list');};
+    async function moveLink3() {navigate('/investigator');};
     return (
         <div>
-            <SideNav
-                onSelect={(selected) => {
-                    // Add your code here
-                }}
-            >
+            <SideNav>
                 <SideNav.Toggle />
                 
                 <SideNav.Nav defaultSelected="home">
                     
-                    <NavItem eventKey="home" href='/'>
+                    <NavItem eventKey="home" onClick={moveLink1} >
                         <NavIcon>
                             <a href='/'>
                                 <img src="/asset/profile.png" width='30px' style={{ marginTop: '10px' }} />
@@ -31,7 +32,7 @@ const Sidebar = () => {
                              </a> 
                         </NavText>
                     </NavItem>
-                    <NavItem eventKey="Dashboard">
+                    <NavItem eventKey="Dashboard" onClick={moveLink1}>
                         <NavIcon>
                             <a href='/'>
                                 <img src="/asset/dashboard.png" width={'20px'} />
@@ -44,7 +45,7 @@ const Sidebar = () => {
                         </NavText>
                     </NavItem>
 
-                    <NavItem eventKey="Whistle">
+                    <NavItem eventKey="Whistle" onClick={moveLink2}>
                         <NavIcon>
                             <a href='/card_list'><img src="/asset/whistle.png" width={'20px'} /></a>
                         </NavIcon>
@@ -53,7 +54,7 @@ const Sidebar = () => {
                         </NavText>
                     </NavItem>
 
-                    <NavItem eventKey="Investigator">
+                    <NavItem eventKey="Investigator" onClick={moveLink3}>
                         <NavIcon>
                             <a href='/investigator'>
                                 <img src="/asset/users.png" width={'20px'} />

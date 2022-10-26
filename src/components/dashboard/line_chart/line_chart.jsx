@@ -209,28 +209,28 @@ const Line_chart = (props) => {
                 label: '# of Votes',
                 data: DataPieChartMonth,
                 backgroundColor: [
+                    '#be7c25',
+                    '#7725be',
+                    '#bc25be',
+                    '#be2528',
                     '#13C4CF',
                     '#150846',
                     '#f6f431',
                     '#2596be',
                     '#25be8c',
                     '#6fbe25',
-                    '#be7c25',
-                    '#7725be',
-                    '#bc25be',
-                    '#be2528',
                 ],
                 borderColor: [
+                    '#be7c25',
+                    '#7725be',
+                    '#bc25be',
+                    '#be2528',
                     '#13C4CF',
                     '#150846',
                     '#f6f431',
                     '#2596be',
                     '#25be8c',
                     '#6fbe25',
-                    '#be7c25',
-                    '#7725be',
-                    '#bc25be',
-                    '#be2528',
                 ],
                 borderWidth: 1,
             },
@@ -279,7 +279,7 @@ const Line_chart = (props) => {
                     <div className='grid shadow'>
                         <div className='pie_title'>
                             January
-                            <img src='/asset/horizontal.png' className='p-i' />
+                            {/* <img src='/asset/horizontal.png' className='p-i' /> */}
                         </div>
                         <div className='wrap_pie'>
                             <Pie data={PieChart1} options={{ plugins: { legend: { display: false, } } }} />
@@ -295,7 +295,7 @@ const Line_chart = (props) => {
                     <div className='grid shadow'>
                         <div className='pie_title'>
                             2022
-                            <img src='/asset/horizontal.png' className='p-i' />
+                            {/* <img src='/asset/horizontal.png' className='p-i' /> */}
                         </div>
                         <div className='wrap_pie'>
                             <Pie data={PieChart2} options={{ plugins: { legend: { display: false, } } }} />
