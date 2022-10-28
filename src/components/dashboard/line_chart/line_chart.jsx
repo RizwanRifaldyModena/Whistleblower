@@ -92,6 +92,9 @@ const Line_chart = (props) => {
     const [NamePieChartYear, setNamePieChartYear] = useState([]);
     const [DataPieChartMonth, setDataPieChartMonth] = useState([]);
     const [NamePieChartMonth, setNamePieChartMonth] = useState([]);
+    const [CheckPieMonth, setCheckPieMonth] = useState([]);
+    const [CheckPieYear, setCheckPieYear] = useState([]);
+
     // console.log(endDate)
 
     let token = (localStorage.getItem('user-token'));
@@ -138,7 +141,7 @@ const Line_chart = (props) => {
 
     const loadPieChartDataYear = async () => {
         const year = (format(PieFilterYear, 'yyyy'))
-        const response = await fetch("http://devtest.modena.co.id/api-wbs/public/api/dashboard/pie-chart?periode_type=year&year="+year, {
+        const response = await fetch("http://devtest.modena.co.id/api-wbs/public/api/dashboard/pie-chart?periode_type=year&year=" + year, {
             method: 'GET',
             headers: {
                 "Content-Type": "Application/json",
@@ -146,18 +149,23 @@ const Line_chart = (props) => {
                 "Authorization": `Bearer ${token}`
             }
         }).then((response) => response.json())
-        // console.log(response.data.label);
+        // console.log(response.data.summary);
         if (response.error === 'Unauthenticated.') {
             navigate('/login');
         }
-        setDataPieChartYear(response.data.values)
-        setNamePieChartYear(response.data.label)
+
+
+        if (response.success == true) {
+            setDataPieChartYear(response.data.values)
+            setNamePieChartYear(response.data.label)
+            setCheckPieYear(response.data.summary)
+        }
     }
 
     const loadPieChartDataMonth = async () => {
         const start = (format(PieFilterMonth, 'MM'))
         const year = (format(ThisYear, 'yyyy'))
-        const response = await fetch("http://devtest.modena.co.id/api-wbs/public/api/dashboard/pie-chart?periode_type=month&month="+start+"&year="+year, {
+        const response = await fetch("http://devtest.modena.co.id/api-wbs/public/api/dashboard/pie-chart?periode_type=month&month=" + start + "&year=" + year, {
             method: 'GET',
             headers: {
                 "Content-Type": "Application/json",
@@ -169,8 +177,12 @@ const Line_chart = (props) => {
         if (response.error === 'Unauthenticated.') {
             navigate('/login');
         }
-        setDataPieChartMonth(response.data.values)
-        setNamePieChartMonth(response.data.label)
+        // console.log(response.success)
+        if (response.success === true) {
+            setDataPieChartMonth(response.data.values)
+            setNamePieChartMonth(response.data.label)
+            setCheckPieMonth(response.data.summary)
+        }
     }
 
     const Linelabels = ["Jan", "Feb", "Maret", "April", "Mei", "Juni", "Juli", "Agust", "Sept", "Okt. ", "Nov", "Des"];
@@ -270,7 +282,7 @@ const Line_chart = (props) => {
         loadPieChartDataYear();
         loadPieChartDataMonth();
         loadDataCountry()
-    }, [startDate, filterCountry,PieFilterMonth,PieFilterYear])
+    }, [startDate, filterCountry, PieFilterMonth, PieFilterYear])
 
     // console.log(format(startDate, 'MM-yyyy'))
 
@@ -299,6 +311,13 @@ const Line_chart = (props) => {
                         </div>
                     </div>
                     <div className='grid shadow'>
+                        {CheckPieMonth == 0 ?
+                            <div>
+                                <img src='asset/not_found.png' className='not_found' />
+                                <p className='not_found_info'>No whistle data found for this month</p>
+                            </div>
+
+                            : ""}
                         <div className='pie_title'>
                             {format(PieFilterMonth, 'MMMM')}
                             <img src='/asset/button.png' className='p-i' onClick={handleClickMonthPie} width={'35px'} />
@@ -312,6 +331,7 @@ const Line_chart = (props) => {
                                     inline />
                             )}
                         </div>
+
                         <div className='wrap_pie'>
                             <Pie data={PieChart1} options={{ plugins: { legend: { display: false, } } }} />
                         </div>
@@ -324,6 +344,13 @@ const Line_chart = (props) => {
                         </div> */}
                     </div>
                     <div className='grid shadow'>
+                        {CheckPieYear == 0 ?
+                            <div>
+                                <img src='asset/not_found.png' className='not_found' />
+                                <p className='not_found_info'>No whistle data found for this year</p>
+                            </div>
+
+                            : ""}
                         <div className='pie_title'>
                             {format(PieFilterYear, 'yyyy')}
 

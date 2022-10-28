@@ -26,6 +26,7 @@ const List_investigator = () => {
     const [items, setItems] = useState([]);
     const navigate = useNavigate();
     const [email, setEmail] = useState("");
+    const [name, setName] = useState("");
     const [DataSearch, setSearch] = useState("");
     let token = (localStorage.getItem('user-token'));
 
@@ -74,6 +75,7 @@ const List_investigator = () => {
 
     async function InsertUser() {
         let data_email = (email);
+        let data_name = (name);
         let result = await fetch("http://devtest.modena.co.id/api-wbs/public/api/master/users/create", {
             method: 'POST',
             headers: {
@@ -81,7 +83,7 @@ const List_investigator = () => {
                 "Accept": "Application/json",
                 "Authorization": `Bearer ${token}`
             },
-            body: JSON.stringify({ "email": data_email, "role_id": "2" })
+            body: JSON.stringify({ "email": data_email, "name": data_name })
         })
         result = await result.json();
         if (result.success === false) {
@@ -219,21 +221,6 @@ const List_investigator = () => {
                     </Menu>
                 ))
             }
-            <Modal
-                open={openModalAddInvs}
-                onClose={handleCloseModalAddInvs}
-            >
-                <Box sx={style} className={'wrap_popup_inv'}>
-                    <b>Add new investigator</b><br />
-                    <p>Email</p>
-                    <input
-                        type={'text'}
-                        placeholder={'Enter email'}
-                        onChange={(e) => setEmail(e.target.value)}
-                    />
-                    <button onClick={InsertUser}>Submit</button>
-                </Box>
-            </Modal>
 
             
             <Modal
@@ -247,6 +234,12 @@ const List_investigator = () => {
                         type={'text'}
                         placeholder={'Enter email'}
                         onChange={(e) => setEmail(e.target.value)}
+                    />
+                    <p>Name</p>
+                    <input
+                        type={'text'}
+                        placeholder={'Enter name'}
+                        onChange={(e) => setName(e.target.value)}
                     />
                     <button onClick={InsertUser}>Submit</button>
                 </Box>
